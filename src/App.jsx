@@ -24,7 +24,7 @@ const deleteTask=(id)=>{
 };
 
 return (
-  <div>
+  <div className="container">
     <Header />
     <TaskForm
     tasks={tasks}

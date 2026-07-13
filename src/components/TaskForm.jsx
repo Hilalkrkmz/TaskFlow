@@ -15,7 +15,7 @@ function TaskForm({ tasks , setTasks}){
     };
     return (
   
-        <div>
+        <div className="task-form">
             <input 
             type="text"
             placeholder="görev gir"

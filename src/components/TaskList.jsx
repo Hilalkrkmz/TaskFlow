@@ -3,7 +3,7 @@ import TaskItem from "./TaskItem";
 function TaskList({tasks,toggleTask,deleteTask}){
     return (
  
-        <div>
+        <div className="task-list">
             {
                 tasks.map(task=>(
                     <TaskItem
