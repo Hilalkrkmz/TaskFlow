@@ -8,6 +8,7 @@ function App(){
 
   const [tasks, setTasks]= useState([]);
 //suanki deger ve değişen deger
+  const [editingId, setEditingId] = useState(null);
 
 const toggleTask =(id)=>{
   setTasks(
@@ -18,6 +19,16 @@ const toggleTask =(id)=>{
     )
   );
 }
+
+const updateTask = (id, newText) => {
+  setTasks(
+    tasks.map(task =>//butun degerleri dolasıyor
+      task.id === id
+        ? { ...task, text: newText }
+        : task
+    )
+  );
+};
 
 const deleteTask=(id)=>{
   setTasks(tasks.filter(task => task.id !==id));
@@ -34,7 +45,10 @@ return (
     tasks={tasks}
     toggleTask={toggleTask}
     deleteTask={deleteTask}
-    />
+    editingId={editingId}
+    setEditingId={setEditingId}
+    updateTask={updateTask}
+   />
   </div>
 );
 

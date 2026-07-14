@@ -1,6 +1,6 @@
 import TaskItem from "./TaskItem";
 
-function TaskList({tasks,toggleTask,deleteTask}){
+function TaskList({tasks,toggleTask,deleteTask,editingId,setEditingId,updateTask}){
     return (
  
         <div className="task-list">
@@ -11,6 +11,9 @@ function TaskList({tasks,toggleTask,deleteTask}){
                         task={task}
                         toggleTask={toggleTask}
                         deleteTask={deleteTask}
+                        editingId={editingId}
+                        setEditingId={setEditingId}
+                        updateTask={updateTask}
                     />
         
                 ))}
