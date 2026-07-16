@@ -10,6 +10,8 @@ function App(){
 //suanki deger ve değişen deger
   const [editingId, setEditingId] = useState(null);
 
+  const [filter, setFilter]= useState("all");
+
 const toggleTask =(id)=>{
   setTasks(
     tasks.map(task=>
@@ -34,25 +36,61 @@ const deleteTask=(id)=>{
   setTasks(tasks.filter(task => task.id !==id));
 };
 
+const totalTasks=tasks.length;
+
+const completedTasks=tasks.filter(task=> task.completed).length;
+
+const remainingTasks=totalTasks-completedTasks;
+
+const filteredTasks=tasks.filter(task=>{
+  if(filter === "active"){
+    return !task.completed;
+  }
+  if(filter=== "completed"){
+    return task.completed;
+  }
+  return true;
+});
+
 return (
   <div className="container">
-    <Header />
-    <TaskForm
-    tasks={tasks}
-    setTasks={setTasks}  
+
+    <Header
+      totalTasks={totalTasks}
+      completedTasks={completedTasks}
+      remainingTasks={remainingTasks}
     />
-    <TaskList 
-    tasks={tasks}
-    toggleTask={toggleTask}
-    deleteTask={deleteTask}
-    editingId={editingId}
-    setEditingId={setEditingId}
-    updateTask={updateTask}
-   />
+
+    <TaskForm
+      tasks={tasks}
+      setTasks={setTasks}
+    />
+
+  <div className="filter-buttons">
+    <button onClick={() => setFilter("all")}>
+        Hepsi
+    </button>
+
+    <button onClick={() => setFilter("active")}>
+        Aktif
+    </button>
+
+    <button onClick={() => setFilter("completed")}>
+        Tamamlanan
+    </button>
+  </div>
+
+    <TaskList
+      tasks={filteredTasks}
+      toggleTask={toggleTask}
+      deleteTask={deleteTask}
+      editingId={editingId}
+      setEditingId={setEditingId}
+      updateTask={updateTask}
+    />
+
   </div>
 );
-
-
 
 }
 export default App;
