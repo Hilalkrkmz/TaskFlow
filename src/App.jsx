@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
 import Header from "./components/Header";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
@@ -11,6 +11,8 @@ function App(){
   const [editingId, setEditingId] = useState(null);
 
   const [filter, setFilter]= useState("all");
+
+  const firstRender = useRef(true);
 
 const toggleTask =(id)=>{
   setTasks(
@@ -35,6 +37,23 @@ const updateTask = (id, newText) => {
 const deleteTask=(id)=>{
   setTasks(tasks.filter(task => task.id !==id));
 };
+
+useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+
+    if (savedTasks) {
+        setTasks(JSON.parse(savedTasks));
+    }
+}, []);
+
+useEffect(() => {
+    if (firstRender.current) {
+        firstRender.current = false;
+        return;
+    }
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}, [tasks]);
 
 const totalTasks=tasks.length;
 
