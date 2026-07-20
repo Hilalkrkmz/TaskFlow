@@ -3,6 +3,10 @@ import Header from "./components/Header";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import "./TaskFlow.css";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./components/Dashboard";
+
+const priorityWeight={high:3, medium: 2, low:1};
 
 function App(){
 
@@ -12,13 +16,17 @@ function App(){
 
   const [filter, setFilter]= useState("all");
 
+  const [sortBy, setSortBy] = useState("created");
+
   const firstRender = useRef(true);
 
 const toggleTask =(id)=>{
   setTasks(
     tasks.map(task=>
       task.id === id
-      ?{...task, completed: !task.completed}
+      ?{...task,
+         completed: !task.completed,
+         completedAt: !task.completed ? new Date().toISOString() : null}
       : task
     )
   );
@@ -71,36 +79,66 @@ const filteredTasks=tasks.filter(task=>{
   return true;
 });
 
+ const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (sortBy === "priority") {
+      return (priorityWeight[b.priority] || 0) - (priorityWeight[a.priority] || 0);
+    }
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
 return (
+<div className="app">
+    <Sidebar />
+  
   <div className="container">
 
-    <Header
-      totalTasks={totalTasks}
-      completedTasks={completedTasks}
-      remainingTasks={remainingTasks}
-    />
+    <Header/>
+
+    <Dashboard
+    totalTasks={totalTasks}
+    completedTasks={completedTasks}
+    remainingTasks={remainingTasks}
+/>
 
     <TaskForm
       tasks={tasks}
       setTasks={setTasks}
     />
 
+<div className="task-list-header">
+          <h3>My Tasks</h3>
+          <select
+            className="sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="created">Sort: Created</option>
+            <option value="priority">Sort: Priority</option>
+          </select>
+        </div>
+
   <div className="filter-buttons">
-    <button onClick={() => setFilter("all")}>
-        Hepsi
+     <button
+      className={filter === "all" ? "active" : ""}
+      onClick={() => setFilter("all")}>
+       All
     </button>
 
-    <button onClick={() => setFilter("active")}>
-        Aktif
+    <button
+      className={filter === "active" ? "active" : ""}
+      onClick={() => setFilter("active")}>
+        Active
     </button>
 
-    <button onClick={() => setFilter("completed")}>
-        Tamamlanan
+    <button
+      className={filter === "completed" ? "active" : ""}
+      onClick={() => setFilter("completed")}>
+        Completed
     </button>
   </div>
 
     <TaskList
-      tasks={filteredTasks}
+      tasks={sortedTasks}
       toggleTask={toggleTask}
       deleteTask={deleteTask}
       editingId={editingId}
@@ -109,6 +147,8 @@ return (
     />
 
   </div>
+  
+</div>
 );
 
 }

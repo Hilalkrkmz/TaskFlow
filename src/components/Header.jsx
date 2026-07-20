@@ -1,18 +1,10 @@
-function Header({
-    totalTasks,
-    completedTasks,
-    remainingTasks
-}){
+function Header() {
     return (
         <header className="header">
-          <h1>TaskFlow</h1>
-          <p>Görevlerini yönet</p>
-          <div className="counter">
-          Toplam: {totalTasks} |
-          Tamamlanan: {completedTasks} |
-          Kalan: {remainingTasks}
-         </div>
-    </header>
+            <h1>TaskFlow</h1>
+            <p>Manage your daily tasks efficiently.</p>
+        </header>
     );
 }
+
 export default Header;
