@@ -409,3 +409,835 @@
   justify-content: center;
   margin-bottom: 12px;
 }
+
+/* ===== calendar page ===== */
+.calendar-page {
+  max-width: 640px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calendar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.calendar-nav button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.calendar-nav button:hover {
+  background: var(--surface-muted);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  background: var(--surface);
+}
+
+.calendar-weekday {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 4px;
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  background: var(--heat-0);
+  padding: 0;
+}
+
+.calendar-cell:hover {
+  outline: 1px solid var(--border-strong);
+}
+
+.calendar-cell.empty {
+  cursor: default;
+  background: transparent;
+}
+
+.calendar-cell.selected {
+  outline: 2px solid var(--text);
+}
+
+.calendar-cell.heat-0 { background: var(--heat-0); color: var(--text-muted); }
+.calendar-cell.heat-1 { background: var(--heat-1); color: var(--text-secondary); }
+.calendar-cell.heat-2 { background: var(--heat-2); color: #ffffff; }
+.calendar-cell.heat-3 { background: var(--heat-3); color: #ffffff; }
+.calendar-cell.heat-4 { background: var(--heat-4); color: #ffffff; }
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  aspect-ratio: unset;
+  cursor: default;
+}
+
+.calendar-day-detail {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.calendar-day-detail h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.calendar-day-detail ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.calendar-day-detail li {
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-day-detail li:last-child {
+  border-bottom: none;
+}
+
+.calendar-empty-msg {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===== coming soon placeholder ===== */
+.coming-soon {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.coming-soon h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* ===== calendar page ===== */
+.calendar-page {
+  max-width: 640px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calendar-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.calendar-nav button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.calendar-nav button:hover {
+  background: var(--surface-muted);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: var(--surface);
+}
+
+.calendar-weekday {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 4px;
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+}
+
+.calendar-cell.empty {
+  cursor: default;
+}
+
+.calendar-cell.heat-0 {
+  background: var(--heat-0);
+  color: var(--text-muted);
+}
+
+.calendar-cell.heat-1 {
+  background: var(--heat-1);
+  color: var(--text);
+}
+
+.calendar-cell.heat-2 {
+  background: var(--heat-2);
+  color: var(--heat-text-dark);
+}
+
+.calendar-cell.heat-3 {
+  background: var(--heat-3);
+  color: var(--heat-text-dark);
+}
+
+.calendar-cell.heat-4 {
+  background: var(--heat-4);
+  color: var(--heat-text-dark);
+}
+
+.calendar-cell.selected {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+  font-weight: 700;
+}
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  aspect-ratio: unset;
+}
+
+.calendar-day-detail {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.calendar-day-detail h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.calendar-day-detail ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.calendar-day-detail li {
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-day-detail li:last-child {
+  border-bottom: none;
+}
+
+.calendar-empty-msg {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===== coming soon placeholder ===== */
+.coming-soon {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.coming-soon h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+/* ===== statistics page ===== */
+.stats-page {
+  max-width: 640px;
+}
+
+.stats-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stats-card {
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.stats-card-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.stats-card-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.stats-card-value span {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.stats-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  background: var(--surface);
+}
+
+.stats-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* weekly bar chart */
+.stats-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 110px;
+}
+
+.stats-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.stats-bar-count {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.stats-bar-track {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.stats-bar-fill {
+  width: 100%;
+  background: var(--heat-3);
+  border-radius: 4px;
+  min-height: 4px;
+}
+
+.stats-bar-fill.empty {
+  background: var(--heat-0);
+}
+
+.stats-bar-label {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.stats-bar-label.today {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* priority breakdown */
+.stats-priority-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stats-priority-row:last-child {
+  margin-bottom: 0;
+}
+
+.stats-priority-label {
+  font-size: 12px;
+  width: 56px;
+  color: var(--text-secondary);
+}
+
+.stats-priority-track {
+  flex: 1;
+  height: 8px;
+  background: var(--surface-muted);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stats-priority-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.priority-fill-high {
+  background: var(--text);
+}
+
+.priority-fill-medium {
+  background: var(--text-secondary);
+}
+
+.priority-fill-low {
+  background: var(--border-strong);
+}
+
+.stats-priority-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  width: 20px;
+  text-align: right;
+}
+
+/* ===== settings page ===== */
+.settings-page {
+  max-width: 640px;
+}
+
+.settings-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.settings-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  background: var(--surface);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-row-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.settings-row-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 360px;
+}
+
+.settings-danger-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: #c0392b;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.settings-danger-btn:hover {
+  opacity: 0.85;
+}
+
+.settings-cancel-btn {
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.settings-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.settings-confirm-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #c0392b;
+  white-space: nowrap;
+}
+
+/* ===== settings: data & about panels ===== */
+.settings-page .settings-panel {
+  margin-bottom: 16px;
+}
+
+.settings-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.settings-panel .settings-row {
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.settings-panel .settings-row:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.settings-btn:hover {
+  background: var(--surface-muted);
+}
+
+.settings-about p {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.settings-about p:last-child {
+  margin-bottom: 0;
+}
+
+.settings-about-muted {
+  color: var(--text-secondary) !important;
+  font-size: 12px !important;
+}
+
+/* ===== theme decoration: falling sakura petals ===== */
+.theme-decoration {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.sakura-petal-wrap {
+  position: absolute;
+  top: -10%;
+  animation-name: sakura-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.sakura-petal-blob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.55), transparent 45%),
+    radial-gradient(circle at 55% 65%, #f4b3ca, #e07a9c 75%, transparent 100%);
+  filter: blur(0.2px);
+}
+
+@keyframes sakura-fall {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(24px, 55vh) rotate(180deg);
+  }
+  100% {
+    transform: translate(-24px, 115vh) rotate(360deg);
+  }
+}
+
+/* ===== themes page ===== */
+.themes-page {
+  max-width: 640px;
+}
+
+.themes-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.themes-grid {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.theme-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  width: 140px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-card:hover {
+  background: var(--surface-muted);
+}
+
+.theme-card.active {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.theme-swatches {
+  display: flex;
+  gap: 4px;
+}
+
+.theme-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.theme-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.themes-note {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 16px;
+}
+
+/* ===== theme decoration: ocean waves ===== */
+.ocean-waves {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 110px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.wave-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+}
+
+.wave-back {
+  animation: wave-scroll 18s linear infinite;
+}
+
+.wave-mid {
+  animation: wave-scroll 12s linear infinite reverse;
+}
+
+.wave-front {
+  animation: wave-scroll 8s linear infinite;
+}
+
+@keyframes wave-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ===== theme decoration: forest (fireflies + swaying grass) ===== */
+.forest-fireflies {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: #e8f78a;
+  box-shadow: 0 0 8px 3px rgba(232, 247, 138, 0.75);
+  animation-name: firefly-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes firefly-float {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.15;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(12px, -34px);
+    opacity: 0.35;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-10px, -60px);
+    opacity: 0.15;
+  }
+}
+
+.forest-grass {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 90px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.grass-blade {
+  position: absolute;
+  bottom: 0;
+  background: linear-gradient(to top, #3f7d43, #6fae56);
+  border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+  transform-origin: bottom center;
+  animation-name: blade-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes blade-sway {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}

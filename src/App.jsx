@@ -5,6 +5,12 @@ import TaskList from "./components/TaskList";
 import "./TaskFlow.css";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
+import Calendar from "./components/Calendar";
+import ComingSoon from "./components/ComingSoon";
+import Statistics from "./components/Statics";
+import Settings from "./components/Settings";
+import Themes from "./components/Themes";
+import ThemeDecoration from "./components/ThemeDecoration";
 
 const priorityWeight={high:3, medium: 2, low:1};
 
@@ -19,6 +25,10 @@ function App(){
   const [sortBy, setSortBy] = useState("created");
 
   const firstRender = useRef(true);
+  
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "white");
+
+  const [view, setView] = useState("home");
 
 const toggleTask =(id)=>{
   setTasks(
@@ -63,6 +73,11 @@ useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }, [tasks]);
 
+useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+}, [theme]);
+
 const totalTasks=tasks.length;
 
 const completedTasks=tasks.filter(task=> task.completed).length;
@@ -87,11 +102,14 @@ const filteredTasks=tasks.filter(task=>{
   });
 
 return (
+  <>
+<ThemeDecoration theme={theme} />
 <div className="app">
-    <Sidebar />
+    <Sidebar view={view} onNavigate={setView} />
   
   <div className="container">
-
+     {view === "home" && (
+      <>
     <Header/>
 
     <Dashboard
@@ -145,10 +163,17 @@ return (
       setEditingId={setEditingId}
       updateTask={updateTask}
     />
+  </>
+  )}
 
+    {view === "calendar" && <Calendar tasks={tasks} />}
+   {view === "statistics" && <Statistics tasks={tasks} />}
+    {view === "themes" && <Themes theme={theme} setTheme={setTheme} />}
+    {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} />}
   </div>
   
 </div>
+</>
 );
 
 }

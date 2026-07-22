@@ -1,6 +1,14 @@
 import { ListTodo, Home, Calendar, BarChart2, Palette, Settings } from "lucide-react";
 
-function Sidebar() {
+const menuItems = [
+    { key: "home", label: "Home", Icon: Home },
+    { key: "calendar", label: "Calendar", Icon: Calendar },
+    { key: "statistics", label: "Statistics", Icon: BarChart2 },
+    { key: "themes", label: "Themes", Icon: Palette },
+    { key: "settings", label: "Settings", Icon: Settings }
+];
+
+function Sidebar({ view, onNavigate }) {
     return (
         <aside className="sidebar">
             <div className="logo">
@@ -9,21 +17,15 @@ function Sidebar() {
             </div>
 
             <nav>
-                <button className="menu-item active">
-                    <Home size={16} /> Home
-                </button>
-                <button className="menu-item">
-                    <Calendar size={16} /> Calendar
-                </button>
-                <button className="menu-item">
-                    <BarChart2 size={16} /> Statistics
-                </button>
-                <button className="menu-item">
-                    <Palette size={16} /> Themes
-                </button>
-                <button className="menu-item">
-                    <Settings size={16} /> Settings
-                </button>
+                {menuItems.map(({ key, label, Icon }) => (
+                    <button
+                        key={key}
+                        className={`menu-item ${view === key ? "active" : ""}`}
+                        onClick={() => onNavigate(key)}
+                    >
+                        <Icon size={16} /> {label}
+                    </button>
+                ))}
             </nav>
         </aside>
     );
