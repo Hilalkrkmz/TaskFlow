@@ -11,6 +11,7 @@ import Statistics from "./components/Statics";
 import Settings from "./components/Settings";
 import Themes from "./components/Themes";
 import ThemeDecoration from "./components/ThemeDecoration";
+import Notes from "./components/Notes";
 
 const priorityWeight={high:3, medium: 2, low:1};
 
@@ -20,12 +21,15 @@ function App(){
 //suanki deger ve değişen deger
   const [editingId, setEditingId] = useState(null);
 
+  const [notes, setNotes] = useState([]);
+
   const [filter, setFilter]= useState("all");
 
   const [sortBy, setSortBy] = useState("created");
 
   const firstRender = useRef(true);
-  
+  const firstRenderNotes = useRef(true);
+
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "white");
 
   const [view, setView] = useState("home");
@@ -62,6 +66,10 @@ useEffect(() => {
     if (savedTasks) {
         setTasks(JSON.parse(savedTasks));
     }
+    const savedNotes = localStorage.getItem("notes");
+    if (savedNotes) {
+        setNotes(JSON.parse(savedNotes));
+    }
 }, []);
 
 useEffect(() => {
@@ -74,9 +82,21 @@ useEffect(() => {
 }, [tasks]);
 
 useEffect(() => {
+    if (firstRenderNotes.current) {
+        firstRenderNotes.current = false;
+        return;
+    }
+ 
+    localStorage.setItem("notes", JSON.stringify(notes));
+}, [notes]);
+ 
+
+useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
 }, [theme]);
+
+
 
 const totalTasks=tasks.length;
 
@@ -167,7 +187,8 @@ return (
   )}
 
     {view === "calendar" && <Calendar tasks={tasks} />}
-   {view === "statistics" && <Statistics tasks={tasks} />}
+    {view === "notes" && <Notes notes={notes} setNotes={setNotes} />}
+    {view === "statistics" && <Statistics tasks={tasks} />}
     {view === "themes" && <Themes theme={theme} setTheme={setTheme} />}
     {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} />}
   </div>

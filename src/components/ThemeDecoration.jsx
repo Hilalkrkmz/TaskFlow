@@ -67,14 +67,14 @@ function OceanWaves() {
 
 const FIREFLY_COUNT = 12;
 
-const BLADE_COUNT = 90;
+const BLADE_COUNT = 140;
 
 function ForestGrass() {
     const blades = useMemo(() => {
         return Array.from({ length: BLADE_COUNT }).map((_, i) => ({
             id: i,
             left: (i / BLADE_COUNT) * 100 + (Math.random() * 2 - 1),
-            height: 26 + Math.random() * 34,
+            height: 38 + Math.random() * 48,
             width: 3 + Math.random() * 3,
             duration: 2.2 + Math.random() * 2,
             delay: Math.random() * 2
@@ -141,10 +141,206 @@ function ForestScene() {
     );
 }
 
+const STAR_COUNT = 60;
+
+function SpaceScene() {
+    const stars = useMemo(() => {
+        return Array.from({ length: STAR_COUNT }).map((_, i) => ({
+            id: i,
+            top: Math.random() * 100,
+            left: Math.random() * 100,
+            size: 1 + Math.random() * 2,
+            duration: 2 + Math.random() * 3,
+            delay: Math.random() * 5,
+            bright: Math.random() < 0.15
+        }));
+    }, []);
+
+    const shootingStars = useMemo(() => {
+        return [
+            { id: 1, top: 12, left: 10, duration: 6, delay: 1 },
+            { id: 2, top: 30, left: 55, duration: 7, delay: 5 },
+            { id: 3, top: 55, left: 20, duration: 6.5, delay: 9 }
+        ];
+    }, []);
+
+    return (
+        <div className="space-scene" aria-hidden="true">
+            {stars.map(s => (
+                <span
+                    key={s.id}
+                    className={`space-star ${s.bright ? "bright" : ""}`}
+                    style={{
+                        top: `${s.top}%`,
+                        left: `${s.left}%`,
+                        width: `${s.bright ? s.size + 1.5 : s.size}px`,
+                        height: `${s.bright ? s.size + 1.5 : s.size}px`,
+                        animationDuration: `${s.duration}s`,
+                        animationDelay: `${s.delay}s`
+                    }}
+                />
+            ))}
+
+            {shootingStars.map(s => (
+                <span
+                    key={s.id}
+                    className="space-shooting-star"
+                    style={{
+                        top: `${s.top}%`,
+                        left: `${s.left}%`,
+                        animationDuration: `${s.duration}s`,
+                        animationDelay: `${s.delay}s`
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
+const DUST_COUNT = 25;
+
+function DesertScene() {
+    const dust = useMemo(() => {
+        return Array.from({ length: DUST_COUNT }).map((_, i) => ({
+            id: i,
+            top: Math.random() * 100,
+            size: 2 + Math.random() * 3,
+            duration: 10 + Math.random() * 10,
+            delay: Math.random() * 10,
+            opacity: 0.3 + Math.random() * 0.4
+        }));
+    }, []);
+
+    return (
+        <div className="desert-scene" aria-hidden="true">
+            {dust.map(d => (
+                <span
+                    key={d.id}
+                    className="desert-dust"
+                    style={{
+                        top: `${d.top}%`,
+                        width: `${d.size}px`,
+                        height: `${d.size}px`,
+                        opacity: d.opacity,
+                        animationDuration: `${d.duration}s`,
+                        animationDelay: `${d.delay}s`
+                    }}
+                />
+            ))}
+
+            <svg className="desert-dunes" viewBox="0 0 400 60" preserveAspectRatio="none">
+                <path
+                    d="M0,60 L0,35 Q75,15 150,32 Q225,48 300,25 Q350,12 400,28 L400,60 Z"
+                    fill="#d9a441"
+                    opacity="0.6"
+                />
+                <path
+                    d="M0,60 L0,45 Q90,25 180,42 Q260,55 340,35 Q370,28 400,38 L400,60 Z"
+                    fill="#a56a1e"
+                />
+            </svg>
+        </div>
+    );
+}
+
+const AURORA_STAR_COUNT = 35;
+
+function AuroraScene() {
+    const stars = useMemo(() => {
+        return Array.from({ length: AURORA_STAR_COUNT }).map((_, i) => ({
+            id: i,
+            top: Math.random() * 100,
+            left: Math.random() * 100,
+            size: 1 + Math.random() * 1.5,
+            duration: 2 + Math.random() * 3,
+            delay: Math.random() * 5
+        }));
+    }, []);
+
+    return (
+        <div className="aurora-scene" aria-hidden="true">
+            {stars.map(s => (
+                <span
+                    key={s.id}
+                    className="space-star"
+                    style={{
+                        top: `${s.top}%`,
+                        left: `${s.left}%`,
+                        width: `${s.size}px`,
+                        height: `${s.size}px`,
+                        animationDuration: `${s.duration}s`,
+                        animationDelay: `${s.delay}s`
+                    }}
+                />
+            ))}
+
+            <svg className="aurora-layer aurora-1" viewBox="0 0 1200 220" preserveAspectRatio="none">
+                <path
+                    d="M0,40 C150,10 450,70 600,40 C750,10 1050,70 1200,40 L1200,0 L0,0 Z"
+                    fill="#5ee6a8"
+                    opacity="0.3"
+                />
+            </svg>
+            <svg className="aurora-layer aurora-2" viewBox="0 0 1200 220" preserveAspectRatio="none">
+                <path
+                    d="M0,70 C150,30 450,100 600,60 C750,20 1050,90 1200,50 L1200,0 L0,0 Z"
+                    fill="#8b7cf6"
+                    opacity="0.28"
+                />
+            </svg>
+            <svg className="aurora-layer aurora-3" viewBox="0 0 1200 220" preserveAspectRatio="none">
+                <path
+                    d="M0,30 C150,60 450,10 600,50 C750,80 1050,20 1200,55 L1200,0 L0,0 Z"
+                    fill="#5fb3c4"
+                    opacity="0.25"
+                />
+            </svg>
+        </div>
+    );
+}
+
+const BUBBLE_COUNT = 20;
+
+function MintBubbles() {
+    const bubbles = useMemo(() => {
+        return Array.from({ length: BUBBLE_COUNT }).map((_, i) => ({
+            id: i,
+            left: Math.random() * 100,
+            size: 6 + Math.random() * 10,
+            duration: 8 + Math.random() * 8,
+            delay: Math.random() * 10,
+            opacity: 0.3 + Math.random() * 0.3
+        }));
+    }, []);
+
+    return (
+        <div className="mint-bubbles" aria-hidden="true">
+            {bubbles.map(b => (
+                <span
+                    key={b.id}
+                    className="mint-bubble"
+                    style={{
+                        left: `${b.left}%`,
+                        width: `${b.size}px`,
+                        height: `${b.size}px`,
+                        opacity: b.opacity,
+                        animationDuration: `${b.duration}s`,
+                        animationDelay: `${b.delay}s`
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
 function ThemeDecoration({ theme }) {
     if (theme === "sakura") return <SakuraPetals />;
     if (theme === "ocean") return <OceanWaves />;
     if (theme === "forest") return <ForestScene />;
+    if (theme === "space") return <SpaceScene />;
+    if (theme === "desert") return <DesertScene />;
+    if (theme === "aurora") return <AuroraScene />;
+    if (theme === "mint") return <MintBubbles />;
     return null;
 }
 
