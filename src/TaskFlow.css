@@ -1383,45 +1383,6 @@
   animation: wave-scroll 32s linear infinite;
 }
 
-/* ===== theme decoration: lavender (rising soft orbs) ===== */
-.lavender-orbs {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 9998;
-}
-
-.lavender-orb {
-  position: absolute;
-  bottom: -5%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(219, 200, 245, 0.8), rgba(147, 112, 196, 0.35) 70%, transparent 100%);
-  filter: blur(1px);
-  animation-name: bubble-rise;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-/* ===== theme decoration: lavender (kenarda sallanan lavanta dalı) ===== */
-.lavender-sprig-wrap {
-  position: fixed;
-  right: 18px;
-  top: 90px;
-  z-index: 9998;
-  pointer-events: none;
-  transform-origin: 50% 6%;
-  animation: lavender-sway 4.5s ease-in-out infinite;
-}
-
-@keyframes lavender-sway {
-  0%, 100% {
-    transform: rotate(-7deg);
-  }
-  50% {
-    transform: rotate(7deg);
-  }
-}
 
 /* ===== theme decoration: mint (rising bubbles) ===== */
 .mint-bubbles {
@@ -1565,4 +1526,193 @@
 
 .note-delete-btn:hover {
   color: #c0392b;
+}
+/* ===== focus / pomodoro page ===== */
+.focus-page {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.focus-title {
+  align-self: flex-start;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.focus-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.focus-tab {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.focus-tab:hover {
+  background: var(--surface-muted);
+}
+
+.focus-tab.active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.focus-timer-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin-bottom: 24px;
+}
+
+.focus-timer-track {
+  fill: none;
+  stroke: var(--surface-muted);
+  stroke-width: 10px;
+}
+
+.focus-timer-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 10px;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.focus-timer-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.focus-timer-time {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text);
+}
+
+.focus-timer-session {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.focus-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.focus-control-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.focus-control-btn:hover {
+  background: var(--surface-muted);
+}
+
+.focus-control-btn.primary {
+  width: 60px;
+  height: 60px;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.focus-control-btn.primary:hover {
+  opacity: 0.9;
+}
+
+.focus-task-link {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: var(--surface);
+}
+
+.focus-task-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  min-width: 0;
+}
+
+.focus-task-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.focus-task-change {
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: underline;
+}
+
+.focus-task-select {
+  width: 100%;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.focus-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.focus-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  border: 1px solid var(--border-strong);
+}
+
+.focus-dot.filled {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.focus-dots-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
 }

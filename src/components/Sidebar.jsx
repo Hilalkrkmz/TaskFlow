@@ -1,9 +1,10 @@
-import { ListTodo, Home, Calendar, BarChart2, Palette, Settings, StickyNote } from "lucide-react";
+import { ListTodo, Home, Calendar, BarChart2, Palette, Settings, StickyNote, Timer } from "lucide-react";
 
 const menuItems = [
     { key: "home", label: "Home", Icon: Home },
     { key: "calendar", label: "Calendar", Icon: Calendar },
     { key: "notes", label: "Notes", Icon: StickyNote },
+    { key: "focus", label: "Focus", Icon: Timer },
     { key: "statistics", label: "Statistics", Icon: BarChart2 },
     { key: "themes", label: "Themes", Icon: Palette },
     { key: "settings", label: "Settings", Icon: Settings }

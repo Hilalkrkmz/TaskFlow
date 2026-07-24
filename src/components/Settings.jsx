@@ -35,12 +35,12 @@ function Settings({ tasks, setTasks }) {
             try {
                 const parsed = JSON.parse(event.target.result);
                 if (!Array.isArray(parsed)) {
-                    alert("Geçersiz dosya formatı: bir görev listesi bekleniyor.");
+                    alert("Invalid file format: a task list was expected.");
                     return;
                 }
                 setTasks(parsed);
             } catch {
-                alert("Dosya okunamadı, JSON formatını kontrol et.");
+                alert("Couldn't read the file. Please check the JSON format.");
             }
         };
         reader.readAsText(file);
@@ -59,7 +59,7 @@ function Settings({ tasks, setTasks }) {
                 <div className="settings-row">
                     <div>
                         <p className="settings-row-title">Export Tasks (JSON)</p>
-                        <p className="settings-row-desc">Tüm görevlerini bir JSON dosyası olarak indir.</p>
+                        <p className="settings-row-desc">Download all your tasks as a JSON file.</p>
                     </div>
                     <button className="settings-btn" onClick={handleExport}>
                         <Download size={15} /> Export
@@ -69,7 +69,7 @@ function Settings({ tasks, setTasks }) {
                 <div className="settings-row">
                     <div>
                         <p className="settings-row-title">Import Tasks</p>
-                        <p className="settings-row-desc">Daha önce dışa aktardığın bir JSON dosyasını geri yükle.</p>
+                        <p className="settings-row-desc">Restore tasks from a previously exported JSON file.</p>
                     </div>
                     <button className="settings-btn" onClick={handleImportClick}>
                         <Upload size={15} /> Import
@@ -87,7 +87,7 @@ function Settings({ tasks, setTasks }) {
                     <div>
                         <p className="settings-row-title">Clear All Tasks</p>
                         <p className="settings-row-desc">
-                            Bütün görevleri kalıcı olarak siler. Calendar ve Statistics sayfaları da sıfırlanır.
+                            Permanently deletes all tasks. The Calendar and Statistics pages will also be reset.
                         </p>
                     </div>
 
@@ -98,13 +98,13 @@ function Settings({ tasks, setTasks }) {
                     ) : (
                         <div className="settings-confirm">
                             <span className="settings-confirm-text">
-                                <TriangleAlert size={14} /> Emin misin?
+                                <TriangleAlert size={14} /> Are you sure?
                             </span>
                             <button className="settings-danger-btn" onClick={handleReset}>
-                                Evet, sil
+                                Yes, delete
                             </button>
                             <button className="settings-cancel-btn" onClick={() => setConfirming(false)}>
-                                Vazgeç
+                                Cancel
                             </button>
                         </div>
                     )}
@@ -118,7 +118,7 @@ function Settings({ tasks, setTasks }) {
                 <div className="settings-about">
                     <p><strong>TaskFlow</strong> v1.0</p>
                     <p>Created by Hilal Korkmaz</p>
-                    <p className="settings-about-muted">React + LocalStorage</p>
+                    <p className="settings-about-muted">React + Electron + LocalStorage</p>
                 </div>
             </div>
         </div>

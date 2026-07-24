@@ -12,6 +12,7 @@ import Settings from "./components/Settings";
 import Themes from "./components/Themes";
 import ThemeDecoration from "./components/ThemeDecoration";
 import Notes from "./components/Notes";
+import Focus from "./components/Focus";
 
 const priorityWeight={high:3, medium: 2, low:1};
 
@@ -188,6 +189,9 @@ return (
 
     {view === "calendar" && <Calendar tasks={tasks} />}
     {view === "notes" && <Notes notes={notes} setNotes={setNotes} />}
+     <div style={{ display: view === "focus" ? "block" : "none" }}>
+      <Focus tasks={tasks} />
+    </div>
     {view === "statistics" && <Statistics tasks={tasks} />}
     {view === "themes" && <Themes theme={theme} setTheme={setTheme} />}
     {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} />}
