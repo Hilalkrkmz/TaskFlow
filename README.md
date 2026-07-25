@@ -1,16 +1,88 @@
-# React + Vite
+# TaskFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal task management app built with React + Vite, running both in the browser and as a desktop app (via Electron). All data is stored locally in your browser/app — no account, no server, no tracking.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Task management** — add, edit, delete, and complete tasks with priority levels (High / Medium / Low)
+- **Filtering & sorting** — filter by All / Active / Completed, sort by creation date or priority
+- **Calendar** — a GitHub-style contribution heatmap showing how many tasks you completed each day, with a monthly view and per-day breakdown
+- **Statistics** — completion rate, current streak, a 7-day bar chart of completed tasks, and a priority breakdown
+- **Notes** — quick sticky-note style notes, separate from tasks
+- **Focus timer** — a Pomodoro-style timer to help you concentrate while studying or working
+- **Themes** — 9 built-in themes, each with its own color palette and several with unique animated backgrounds:
+  - White (default, minimal)
+  - Sakura (falling cherry blossom petals)
+  - Dark
+  - Ocean (drifting waves)
+  - Forest (fireflies + swaying grass)
+  - Space (twinkling stars + shooting stars)
+  - Desert (drifting sand + dunes)
+  - Aurora (drifting light ribbons + stars)
+  - Mint (rising bubbles)
+- **Settings** — export/import your tasks as JSON, or clear all data with one click
+- **Persistent storage** — everything (tasks, notes, theme choice) is saved to `localStorage` and reloads automatically
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React](https://react.dev/) 19
+- [Vite](https://vite.dev/) 8
+- [lucide-react](https://lucide.dev/) for icons
+- [Electron](https://www.electronjs.org/) + [electron-builder](https://www.electron.build/) for the desktop build
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run in the browser (dev mode):
+
+```bash
+npm run dev
+```
+
+Build a static production bundle:
+
+```bash
+npm run build
+```
+
+## Desktop app (Electron)
+
+Run the app in an Electron window during development:
+
+```bash
+npm run electron:dev
+```
+
+Build a distributable desktop installer (`.exe` on Windows):
+
+```bash
+npm run electron:build
+```
+
+The installer will be created in the `release/` folder.
+
+## Project structure
+
+```
+taskflow/
+├── electron/
+│   └── main.cjs          # Electron main process
+├── src/
+│   ├── components/       # Header, Sidebar, Dashboard, TaskForm, TaskItem,
+│   │                     # TaskList, Calendar, Statistics, Notes, Settings,
+│   │                     # Themes, ThemeDecoration
+│   ├── App.jsx
+│   ├── index.css         # theme variables (colors per theme)
+│   └── TaskFlow.css      # layout + component styles
+├── vite.config.js
+└── package.json
+```
+
+## Author
+
+Created by Hilal Korkmaz.
