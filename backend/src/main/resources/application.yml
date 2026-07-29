@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/taskflow
+    username: taskflow_user
+    password: taskflow_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+server:
+  port: 8080
+
+
+jwt:
+  secret: this-is-a-very-long-development-only-secret-key-change-in-production-123456
+  expiration-ms: 86400000
