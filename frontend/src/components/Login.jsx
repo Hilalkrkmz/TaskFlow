@@ -1,0 +1,87 @@
+import { useState } from "react";
+import axiosInstance from "../api/axiosInstance";
+
+function Login({ onLoginSuccess, onSwitchToRegister }) {
+    
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+     
+    const [error, setError] = useState("");
+
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async (e) => {
+        e.preventDefault(); // formun sayfayı yenilemesini engeller (tarayıcının varsayılan davranışı)
+
+        setError("");   // önceki hatayı temizle
+        setLoading(true);
+
+        try {
+            const response = await axiosInstance.post("/auth/login", {
+                email,
+                password,
+            });
+
+          
+            const { token, fullName, theme } = response.data;
+
+            localStorage.setItem("token", token);
+
+            onLoginSuccess({ fullName, theme });
+
+        } catch (err) {
+            if (err.response && err.response.data && err.response.data.error) {
+                setError(err.response.data.error);
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
+        } finally {
+            // Başarılı da olsa hatalı da olsa, loading'i kapat.
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="auth-page">
+            <div className="auth-card">
+                <h2 className="auth-title">Log in to TaskFlow</h2>
+
+                <form onSubmit={handleLogin}>
+                    <label className="auth-label">Email</label>
+                    <input
+                        type="email"
+                        className="auth-input"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+
+                    <label className="auth-label">Password</label>
+                    <input
+                        type="password"
+                        className="auth-input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+
+                    {error && <p className="auth-error">{error}</p>}
+
+                    <button type="submit" className="auth-submit-btn" disabled={loading}>
+                        {loading ? "Logging in..." : "Log In"}
+                    </button>
+                </form>
+
+                <p className="auth-switch-text">
+                    Don't have an account?{" "}
+                    <span className="auth-switch-link" onClick={onSwitchToRegister}>
+                        Register
+                    </span>
+                </p>
+            </div>
+        </div>
+    );
+}
+
+export default Login;
