@@ -35,12 +35,12 @@ function Settings({ tasks, setTasks }) {
             try {
                 const parsed = JSON.parse(event.target.result);
                 if (!Array.isArray(parsed)) {
-                    alert("Invalid file format: a task list was expected.");
+                    alert("Invalid file format: expected a task list.");
                     return;
                 }
                 setTasks(parsed);
             } catch {
-                alert("Couldn't read the file. Please check the JSON format.");
+                alert("Couldn't read the file, please check the JSON format.");
             }
         };
         reader.readAsText(file);
@@ -87,7 +87,7 @@ function Settings({ tasks, setTasks }) {
                     <div>
                         <p className="settings-row-title">Clear All Tasks</p>
                         <p className="settings-row-desc">
-                            Permanently deletes all tasks. The Calendar and Statistics pages will also be reset.
+                            Permanently deletes all tasks. Calendar and Statistics will reset too.
                         </p>
                     </div>
 
@@ -118,7 +118,7 @@ function Settings({ tasks, setTasks }) {
                 <div className="settings-about">
                     <p><strong>TaskFlow</strong> v1.0</p>
                     <p>Created by Hilal Korkmaz</p>
-                    <p className="settings-about-muted">React + Electron + LocalStorage</p>
+                    <p className="settings-about-muted">React + LocalStorage</p>
                 </div>
             </div>
         </div>

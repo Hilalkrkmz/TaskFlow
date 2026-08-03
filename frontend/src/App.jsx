@@ -15,6 +15,7 @@ import Notes from "./components/Notes";
 import Focus from "./components/Focus";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Profile from "./components/Profile";
 import axiosInstance from "./api/axiosInstance";
 
 const priorityWeight={high:3, medium: 2, low:1};
@@ -256,7 +257,8 @@ return (
     </div>
     {view === "statistics" && <Statistics tasks={tasks} />}
     {view === "themes" && <Themes theme={theme} setTheme={setTheme} />}
-    {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} />}
+    {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} onLogout={handleLogout} />}
+    {view === "profile" && <Profile currentUser={currentUser} onLogout={handleLogout} />}
   </div>
   
 </div>
