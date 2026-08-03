@@ -13,6 +13,9 @@ import Themes from "./components/Themes";
 import ThemeDecoration from "./components/ThemeDecoration";
 import Notes from "./components/Notes";
 import Focus from "./components/Focus";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import axiosInstance from "./api/axiosInstance";
 
 const priorityWeight={high:3, medium: 2, low:1};
 
@@ -34,6 +37,12 @@ function App(){
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "white");
 
   const [view, setView] = useState("home");
+  
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const [authView, setAuthView] = useState("login");
+
+  const [authChecking, setAuthChecking] = useState(true);
 
 const toggleTask =(id)=>{
   setTasks(
@@ -60,6 +69,31 @@ const updateTask = (id, newText) => {
 const deleteTask=(id)=>{
   setTasks(tasks.filter(task => task.id !==id));
 };
+
+useEffect(() => {
+    const checkExistingLogin = async () => {
+        const token = localStorage.getItem("token");
+ 
+        if (!token) {
+            setAuthChecking(false);
+            return;
+        }
+ 
+        try {
+            const response = await axiosInstance.get("/users/me");
+            const { fullName, theme: userTheme } = response.data;
+ 
+            setCurrentUser({ fullName, theme: userTheme });
+            setTheme(userTheme);
+        } catch (err) {
+            localStorage.removeItem("token");
+        } finally {
+            setAuthChecking(false);
+        }
+    };
+ 
+    checkExistingLogin();
+}, []);
 
 useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -97,7 +131,16 @@ useEffect(() => {
     localStorage.setItem("theme", theme);
 }, [theme]);
 
-
+const handleAuthSuccess = ({ fullName, theme: userTheme }) => {
+    setCurrentUser({ fullName, theme: userTheme });
+    setTheme(userTheme);
+};
+ 
+const handleLogout = () => {
+    localStorage.removeItem("token");
+    setCurrentUser(null);
+    setAuthView("login");
+};
 
 const totalTasks=tasks.length;
 
@@ -121,6 +164,25 @@ const filteredTasks=tasks.filter(task=>{
     }
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
+
+
+if (authChecking) {
+    return <div className="auth-checking">Loading...</div>;
+}
+ 
+if (!currentUser) {
+    return authView === "login" ? (
+        <Login
+            onLoginSuccess={handleAuthSuccess}
+            onSwitchToRegister={() => setAuthView("register")}
+        />
+    ) : (
+        <Register
+            onRegisterSuccess={handleAuthSuccess}
+            onSwitchToLogin={() => setAuthView("login")}
+        />
+    );
+}
 
 return (
   <>
