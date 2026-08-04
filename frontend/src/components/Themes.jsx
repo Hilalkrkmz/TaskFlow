@@ -1,3 +1,5 @@
+import axiosInstance from "../api/axiosInstance";
+
 const themeOptions = [
     { key: "white", name: "White", swatches: ["#ffffff", "#f5f4f0", "#1a1a18"] },
     { key: "sakura", name: "Sakura", swatches: ["#fff5f7", "#fdeaf0", "#d6437a"] },
@@ -11,6 +13,19 @@ const themeOptions = [
 ];
 
 function Themes({ theme, setTheme }) {
+
+    const handleSelectTheme = async (key) => {
+        // 1. Ekranı hemen güncelle (kullanıcı beklemesin).
+        setTheme(key);
+
+        // 2. Backend'e de kaydet ki kalıcı olsun (logout/login sonrası da korunsun).
+        try {
+            await axiosInstance.patch("/users/me/theme", { theme: key });
+        } catch (err) {
+            console.error("Tema backend'e kaydedilemedi:", err);
+        }
+    };
+
     return (
         <div className="themes-page">
             <h2 className="themes-title">Themes</h2>
@@ -20,7 +35,7 @@ function Themes({ theme, setTheme }) {
                     <button
                         key={opt.key}
                         className={`theme-card ${theme === opt.key ? "active" : ""}`}
-                        onClick={() => setTheme(opt.key)}
+                        onClick={() => handleSelectTheme(opt.key)}
                     >
                         <div className="theme-swatches">
                             {opt.swatches.map((c, i) => (

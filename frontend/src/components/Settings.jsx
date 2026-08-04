@@ -116,9 +116,9 @@ function Settings({ tasks, setTasks }) {
                     <Info size={15} /> About
                 </p>
                 <div className="settings-about">
-                    <p><strong>TaskFlow</strong> v1.0</p>
+                    <p><strong>TaskFlow</strong> v2.0</p>
                     <p>Created by Hilal Korkmaz</p>
-                    <p className="settings-about-muted">React + LocalStorage</p>
+                    <p className="settings-about-muted">React + Spring Boot + PostgreSQL</p>
                 </div>
             </div>
         </div>
