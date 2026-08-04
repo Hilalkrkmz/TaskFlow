@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.user.ChangePasswordRequest;
 import com.example.backend.dto.user.ThemeUpdateRequest;
 import com.example.backend.dto.user.UserResponse;
 import com.example.backend.security.UserDetailsImpl;
@@ -31,4 +32,15 @@ public class UserController {
     ) {
         return ResponseEntity.ok(userService.updateTheme(principal.getUser(), request.getTheme()));
     }
+
+
+    @PatchMapping("/me/password")
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal UserDetailsImpl principal,
+            @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        userService.changePassword(principal.getUser(), request);
+        return ResponseEntity.noContent().build();
+    }
+
 }
