@@ -82,9 +82,9 @@ useEffect(() => {
  
         try {
             const response = await axiosInstance.get("/users/me");
-            const { fullName, theme: userTheme } = response.data;
+            const { fullName, email, theme: userTheme } = response.data;
  
-            setCurrentUser({ fullName, theme: userTheme });
+            setCurrentUser({ fullName, email, theme: userTheme });
             setTheme(userTheme);
         } catch (err) {
             localStorage.removeItem("token");
@@ -132,8 +132,8 @@ useEffect(() => {
     localStorage.setItem("theme", theme);
 }, [theme]);
 
-const handleAuthSuccess = ({ fullName, theme: userTheme }) => {
-    setCurrentUser({ fullName, theme: userTheme });
+const handleAuthSuccess = ({ fullName, email, theme: userTheme }) => {
+    setCurrentUser({ fullName, email, theme: userTheme });
     setTheme(userTheme);
 };
  
