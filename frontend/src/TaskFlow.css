@@ -1911,3 +1911,55 @@
 .auth-switch-link:hover {
   text-decoration: underline;
 }
+
+.note-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.note-edit-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+ 
+.note-edit-btn:hover {
+  color: var(--text);
+}
+ 
+.note-edit-textarea {
+  margin-bottom: 10px;
+}
+ 
+.note-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+ 
+.note-save-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--text);
+  color: var(--accent-contrast);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+ 
+.note-cancel-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
