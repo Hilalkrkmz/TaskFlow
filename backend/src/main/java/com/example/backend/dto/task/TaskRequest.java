@@ -10,4 +10,5 @@ public class TaskRequest {
     private String text;
 
     private Boolean completed;
+    private String priority;
 }

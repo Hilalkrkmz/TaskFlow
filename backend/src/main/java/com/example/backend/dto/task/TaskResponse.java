@@ -16,5 +16,7 @@ public class TaskResponse {
     private Long id;
     private String text;
     private boolean completed;
+    private String priority;
+    private LocalDateTime completedAt;
     private LocalDateTime createdAt;
 }

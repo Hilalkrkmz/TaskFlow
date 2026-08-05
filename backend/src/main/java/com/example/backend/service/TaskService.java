@@ -9,6 +9,7 @@ import com.example.backend.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,6 +30,7 @@ public class TaskService {
                 .user(user)
                 .text(request.getText())
                 .completed(false)
+                .priority(request.getPriority() != null ? request.getPriority() : "medium")
                 .build();
 
         taskRepository.save(task);
@@ -42,8 +44,26 @@ public class TaskService {
         if (request.getText() != null) {
             task.setText(request.getText());
         }
+
+        if (request.getPriority() != null) {
+            task.setPriority(request.getPriority());
+        }
+
         if (request.getCompleted() != null) {
-            task.setCompleted(request.getCompleted());
+            boolean wasCompleted = task.isCompleted();
+            boolean nowCompleted = request.getCompleted();
+
+            task.setCompleted(nowCompleted);
+
+            // Tamamlandı olarak işaretlendiyse şimdiki zamanı kaydet,
+            // tekrar aktif yapıldıysa completedAt'i temizle.
+            // Zaten tamamlanmış bir görev tekrar "true" ile güncellenirse
+            // (örn. sadece text değişikliği) tarihi bozmuyoruz.
+            if (!wasCompleted && nowCompleted) {
+                task.setCompletedAt(LocalDateTime.now());
+            } else if (wasCompleted && !nowCompleted) {
+                task.setCompletedAt(null);
+            }
         }
 
         taskRepository.save(task);
@@ -62,6 +82,8 @@ public class TaskService {
                 .id(task.getId())
                 .text(task.getText())
                 .completed(task.isCompleted())
+                .priority(task.getPriority())
+                .completedAt(task.getCompletedAt())
                 .createdAt(task.getCreatedAt())
                 .build();
     }
