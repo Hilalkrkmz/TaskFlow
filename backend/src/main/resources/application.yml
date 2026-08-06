@@ -14,10 +14,27 @@ spring:
         format_sql: true
     open-in-view: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: taskflow.app.dev@gmail.com
+    password: xxxx xxxx xxxx xxxx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: 8080
-
 
 jwt:
   secret: this-is-a-very-long-development-only-secret-key-change-in-production-123456
   expiration-ms: 86400000
+
+app:
+  mail:
+    from: taskflow.app.dev@gmail.com
+  verification:
+    code-expiry-minutes: 10

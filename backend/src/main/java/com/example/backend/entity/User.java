@@ -31,6 +31,10 @@ public class User {
     private String theme="white";
 
     @Column(nullable = false)
+    @Builder.Default
+    private boolean enabled = false;
+
+    @Column(nullable = false)
     private LocalDateTime cretaedAt;
 
     @PrePersist
