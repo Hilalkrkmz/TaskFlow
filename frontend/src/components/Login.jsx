@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axiosInstance from "../api/axiosInstance";
 
-function Login({ onLoginSuccess, onSwitchToRegister }) {
+function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword }) {
     
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -46,7 +46,7 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
         <div className="auth-page">
             <div className="auth-card">
                 <h2 className="auth-title">Log in to TaskFlow</h2>
-
+ 
                 <form onSubmit={handleLogin}>
                     <label className="auth-label">Email</label>
                     <input
@@ -56,7 +56,7 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
-
+ 
                     <label className="auth-label">Password</label>
                     <input
                         type="password"
@@ -65,23 +65,30 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-
+ 
                     {error && <p className="auth-error">{error}</p>}
-
+ 
                     <button type="submit" className="auth-submit-btn" disabled={loading}>
                         {loading ? "Logging in..." : "Log In"}
                     </button>
                 </form>
-
+ 
                 <p className="auth-switch-text">
                     Don't have an account?{" "}
                     <span className="auth-switch-link" onClick={onSwitchToRegister}>
                         Register
                     </span>
                 </p>
+ 
+                <p className="auth-switch-text">
+                    <span className="auth-switch-link" onClick={onForgotPassword}>
+                        Forgot password?
+                    </span>
+                </p>
             </div>
         </div>
     );
 }
-
+ 
 export default Login;
+ 

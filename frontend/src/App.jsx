@@ -1,4 +1,4 @@
-import { useState,useEffect,useRef } from "react";
+import { useState,useEffect } from "react";
 import Header from "./components/Header";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
@@ -6,7 +6,6 @@ import "./TaskFlow.css";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
-import ComingSoon from "./components/ComingSoon";
 import Statistics from "./components/Statics";
 import Settings from "./components/Settings";
 import Themes from "./components/Themes";
@@ -16,6 +15,8 @@ import Focus from "./components/Focus";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
+import VerifyEmail from "./components/VerifyEmail";
+import ForgotPassword from "./components/ForgotPassword";
 import axiosInstance from "./api/axiosInstance";
 
 const priorityWeight={high:3, medium: 2, low:1};
@@ -23,124 +24,127 @@ const priorityWeight={high:3, medium: 2, low:1};
 function App(){
 
   const [tasks, setTasks]= useState([]);
-//suanki deger ve değişen deger
   const [editingId, setEditingId] = useState(null);
-
   const [notes, setNotes] = useState([]);
-
   const [filter, setFilter]= useState("all");
-
   const [sortBy, setSortBy] = useState("created");
-
-  const firstRender = useRef(true);
-  const firstRenderNotes = useRef(true);
-
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "white");
-
   const [view, setView] = useState("home");
-  
+
   const [currentUser, setCurrentUser] = useState(null);
-
   const [authView, setAuthView] = useState("login");
-
   const [authChecking, setAuthChecking] = useState(true);
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState(null);
 
-const toggleTask =(id)=>{
-  setTasks(
-    tasks.map(task=>
-      task.id === id
-      ?{...task,
-         completed: !task.completed,
-         completedAt: !task.completed ? new Date().toISOString() : null}
-      : task
-    )
-  );
-}
 
-const updateTask = (id, newText) => {
-  setTasks(
-    tasks.map(task =>//butun degerleri dolasıyor
-      task.id === id
-        ? { ...task, text: newText }
-        : task
-    )
-  );
+const fetchTasks = async () => {
+    try {
+        const response = await axiosInstance.get("/tasks");
+        setTasks(response.data);
+    } catch (err) {
+        console.error("Görevler yüklenemedi:", err);
+    }
 };
 
-const deleteTask=(id)=>{
-  setTasks(tasks.filter(task => task.id !==id));
+const fetchNotes = async () => {
+    try {
+        const response = await axiosInstance.get("/notes");
+        setNotes(response.data);
+    } catch (err) {
+        console.error("Notlar yüklenemedi:", err);
+    }
+};
+
+const addTask = async (text, priority) => {
+    try {
+        const response = await axiosInstance.post("/tasks", { text, priority });
+        setTasks([...tasks, response.data]);
+    } catch (err) {
+        console.error("Görev eklenemedi:", err);
+    }
+};
+
+const toggleTask = async (id) => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    try {
+        const response = await axiosInstance.patch(`/tasks/${id}`, {
+            completed: !task.completed
+        });
+        setTasks(tasks.map(t => (t.id === id ? response.data : t)));
+    } catch (err) {
+        console.error("Görev güncellenemedi:", err);
+    }
+};
+
+const updateTask = async (id, newText) => {
+    try {
+        const response = await axiosInstance.patch(`/tasks/${id}`, { text: newText });
+        setTasks(tasks.map(t => (t.id === id ? response.data : t)));
+    } catch (err) {
+        console.error("Görev güncellenemedi:", err);
+    }
+};
+
+const deleteTask = async (id) => {
+    try {
+        await axiosInstance.delete(`/tasks/${id}`);
+        setTasks(tasks.filter(t => t.id !== id));
+    } catch (err) {
+        console.error("Görev silinemedi:", err);
+    }
 };
 
 useEffect(() => {
     const checkExistingLogin = async () => {
         const token = localStorage.getItem("token");
- 
+
         if (!token) {
             setAuthChecking(false);
             return;
         }
- 
+
         try {
             const response = await axiosInstance.get("/users/me");
             const { fullName, email, theme: userTheme } = response.data;
- 
+
             setCurrentUser({ fullName, email, theme: userTheme });
             setTheme(userTheme);
+
+            // Giriş geçerliyse, task ve notes'u da hemen çekelim.
+            await fetchTasks();
+            await fetchNotes();
         } catch (err) {
             localStorage.removeItem("token");
         } finally {
             setAuthChecking(false);
         }
     };
- 
+
     checkExistingLogin();
 }, []);
-
-useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-
-    if (savedTasks) {
-        setTasks(JSON.parse(savedTasks));
-    }
-    const savedNotes = localStorage.getItem("notes");
-    if (savedNotes) {
-        setNotes(JSON.parse(savedNotes));
-    }
-}, []);
-
-useEffect(() => {
-    if (firstRender.current) {
-        firstRender.current = false;
-        return;
-    }
-
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-}, [tasks]);
-
-useEffect(() => {
-    if (firstRenderNotes.current) {
-        firstRenderNotes.current = false;
-        return;
-    }
- 
-    localStorage.setItem("notes", JSON.stringify(notes));
-}, [notes]);
- 
 
 useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
 }, [theme]);
 
-const handleAuthSuccess = ({ fullName, email, theme: userTheme }) => {
+const handleAuthSuccess = async ({ fullName, email, theme: userTheme }) => {
     setCurrentUser({ fullName, email, theme: userTheme });
     setTheme(userTheme);
+
+    // Login/Register başarılı olunca da task ve notes'u çekelim
+    await fetchTasks();
+    await fetchNotes();
 };
- 
+
 const handleLogout = () => {
     localStorage.removeItem("token");
     setCurrentUser(null);
     setAuthView("login");
+    setTasks([]);
+    setNotes([]);
 };
 
 const totalTasks=tasks.length;
@@ -170,19 +174,47 @@ const filteredTasks=tasks.filter(task=>{
 if (authChecking) {
     return <div className="auth-checking">Loading...</div>;
 }
- 
+
 if (!currentUser) {
-    return authView === "login" ? (
-        <Login
-            onLoginSuccess={handleAuthSuccess}
-            onSwitchToRegister={() => setAuthView("register")}
-        />
-    ) : (
-        <Register
-            onRegisterSuccess={handleAuthSuccess}
-            onSwitchToLogin={() => setAuthView("login")}
-        />
-    );
+    if (authView === "login") {
+        return (
+            <Login
+                onLoginSuccess={handleAuthSuccess}
+                onSwitchToRegister={() => setAuthView("register")}
+                onForgotPassword={() => setAuthView("forgot-password")}
+            />
+        );
+    }
+
+    if (authView === "register") {
+        return (
+            <Register
+                onRegisterSubmitted={(email) => {
+                    setPendingVerificationEmail(email);
+                    setAuthView("verify-email");
+                }}
+                onSwitchToLogin={() => setAuthView("login")}
+            />
+        );
+    }
+
+    if (authView === "verify-email") {
+        return (
+            <VerifyEmail
+                email={pendingVerificationEmail}
+                onVerifySuccess={handleAuthSuccess}
+                onBackToLogin={() => setAuthView("login")}
+            />
+        );
+    }
+
+    if (authView === "forgot-password") {
+        return (
+            <ForgotPassword
+                onBackToLogin={() => setAuthView("login")}
+            />
+        );
+    }
 }
 
 return (
@@ -202,10 +234,7 @@ return (
     remainingTasks={remainingTasks}
 />
 
-    <TaskForm
-      tasks={tasks}
-      setTasks={setTasks}
-    />
+    <TaskForm onAddTask={addTask} />
 
 <div className="task-list-header">
           <h3>My Tasks</h3>
@@ -257,7 +286,7 @@ return (
     </div>
     {view === "statistics" && <Statistics tasks={tasks} />}
     {view === "themes" && <Themes theme={theme} setTheme={setTheme} />}
-    {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} onLogout={handleLogout} />}
+    {view === "settings" && <Settings tasks={tasks} setTasks={setTasks} />}
     {view === "profile" && <Profile currentUser={currentUser} onLogout={handleLogout} />}
   </div>
   

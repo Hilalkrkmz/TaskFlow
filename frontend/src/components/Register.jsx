@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axiosInstance from "../api/axiosInstance";
 
-function Register({ onRegisterSuccess, onSwitchToLogin }) {
+function Register({ onRegisterSubmitted, onSwitchToLogin }) {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -12,32 +12,23 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
         setError("");
         setLoading(true);
 
         try {
-            // Backend'deki RegisterRequest DTO'suyla birebir eşleşen alanları gönderiyoruz.
-            const response = await axiosInstance.post("/auth/register", {
+            // Register artık token değil, "check your email" mesajı dönüyor.
+            await axiosInstance.post("/auth/register", {
                 fullName,
                 email,
                 password,
                 confirmPassword,
             });
 
-            // Yani register olan kişi ayrıca login yapmak zorunda kalmaz, direkt giriş yapmış sayılır.
-            const { token, fullName: returnedFullName, theme } = response.data;
-
-            localStorage.setItem("token", token);
-
-            onRegisterSuccess({ fullName: returnedFullName, theme });
+            // App.jsx'e "kayıt gönderildi, şimdi bu email için doğrulama ekranına geç" diyoruz.
+            onRegisterSubmitted(email);
 
         } catch (err) {
-            if (err.response && err.response.data && err.response.data.error) {
-                setError(err.response.data.error);
-            } else {
-                setError("Something went wrong. Please try again.");
-            }
+            setError(err.response?.data?.error || "Something went wrong. Please try again.");
         } finally {
             setLoading(false);
         }
