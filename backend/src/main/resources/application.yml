@@ -15,16 +15,16 @@ spring:
     open-in-view: false
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: taskflow.app.dev@gmail.com
-    password: xxxx xxxx xxxx xxxx
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+      host: smtp.gmail.com
+      port: 587
+      username: taskflow.app.team@gmail.com
+      password: ${MAIL_PASSWORD}
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
 
 server:
   port: 8080
