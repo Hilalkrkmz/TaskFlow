@@ -24,11 +24,11 @@ function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword }) {
             });
 
           
-            const { token, fullName, theme } = response.data;
+            const { token, fullName, email: userEmail, theme } = response.data;
 
             localStorage.setItem("token", token);
 
-            onLoginSuccess({ fullName, theme });
+            onLoginSuccess({ fullName, email: userEmail, theme });
 
         } catch (err) {
             if (err.response && err.response.data && err.response.data.error) {
@@ -91,4 +91,3 @@ function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword }) {
 }
  
 export default Login;
- 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axiosInstance from "../api/axiosInstance";
+import OtpInput from "./OtpInput";
 
 function VerifyEmail({ email, onVerifySuccess, onBackToLogin }) {
     const [code, setCode] = useState("");
@@ -50,20 +51,13 @@ function VerifyEmail({ email, onVerifySuccess, onBackToLogin }) {
                 </p>
 
                 <form onSubmit={handleVerify}>
-                    <label className="auth-label">Verification Code</label>
-                    <input
-                        type="text"
-                        className="auth-input"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        maxLength={6}
-                        required
-                    />
+                    <label className="auth-label" style={{ textAlign: "center" }}>Verification Code</label>
+                    <OtpInput length={6} value={code} onChange={setCode} />
 
-                    {error && <p className="auth-error">{error}</p>}
-                    {info && <p className="profile-success">{info}</p>}
+                    {error && <p className="auth-error" style={{ textAlign: "center" }}>{error}</p>}
+                    {info && <p className="profile-success" style={{ textAlign: "center" }}>{info}</p>}
 
-                    <button type="submit" className="auth-submit-btn" disabled={loading}>
+                    <button type="submit" className="auth-submit-btn" disabled={loading || code.length !== 6}>
                         {loading ? "Verifying..." : "Verify"}
                     </button>
                 </form>

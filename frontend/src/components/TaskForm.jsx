@@ -1,23 +1,16 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
-function TaskForm({ tasks , setTasks}){
+function TaskForm({ onAddTask }){
     const [text, setText]=useState("");
     const [priority, setPriority] = useState("medium");
     const addTask= ()=>{
         if(!text.trim()) return;
-    const newTask={
-                    id:Date.now(),
-                    text: text,
-                    completed: false,
-                    priority: priority,
-                    createdAt: new Date().toISOString(),
-                    completedAt: null
-                };
-                setTasks([...tasks,newTask]);
+                onAddTask(text, priority);
                 setText("");
                 setPriority("medium");
     };
+    
     return (
      <div className="task-form-card">
         <div className="task-form">
