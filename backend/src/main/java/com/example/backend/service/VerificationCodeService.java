@@ -51,6 +51,23 @@ public class VerificationCodeService {
         emailService.sendPasswordResetCode(user.getEmail(), code);
     }
 
+
+    // verifyCode'dan farkı: kodu "used" yapmıyor, sadece geçerli mi diye bakıyor.
+    // Forgot-password akışında "önce kodu doğrula, sonra şifre ekranını göster" için kullanılıyor.
+    public void checkCodeValid(User user, String code, VerificationCode.Type type) {
+        VerificationCode verificationCode = verificationCodeRepository
+                .findTopByUserAndTypeAndUsedFalseOrderByCreatedAtDesc(user, type)
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid or expired code"));
+
+        if (!verificationCode.getCode().equals(code)) {
+            throw new InvalidCredentialsException("Invalid or expired code");
+        }
+
+        if (verificationCode.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidCredentialsException("Invalid or expired code");
+        }
+    }
+
     // Girilen kodu doğrular: en son gönderilen, henüz kullanılmamış kod ile eşleşiyor mu,
     // süresi dolmamış mı diye bakar. Doğruysa "used" yapıp geri döner.
     public VerificationCode verifyCode(User user, String code, VerificationCode.Type type) {

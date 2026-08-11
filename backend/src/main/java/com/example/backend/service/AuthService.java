@@ -100,6 +100,15 @@ public class AuthService {
                 .build();
     }
 
+    public MessageResponse verifyResetCode(VerifyEmailRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid or expired code"));
+
+        verificationCodeService.checkCodeValid(user, request.getCode(), VerificationCode.Type.PASSWORD_RESET);
+
+        return new MessageResponse("Code verified. You can now set a new password.");
+    }
+
     public MessageResponse forgotPassword(EmailOnlyRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new InvalidCredentialsException("No account found with this email"));

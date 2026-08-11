@@ -39,6 +39,11 @@ public class AuthController {
     }
 
 
+    @PostMapping("/verify-reset-code")
+    public ResponseEntity<MessageResponse> verifyResetCode(@Valid @RequestBody VerifyEmailRequest request) {
+        return ResponseEntity.ok(authService.verifyResetCode(request));
+    }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody EmailOnlyRequest request) {
         return ResponseEntity.ok(authService.forgotPassword(request));
