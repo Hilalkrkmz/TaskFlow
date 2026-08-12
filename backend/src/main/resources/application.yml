@@ -35,6 +35,6 @@ jwt:
 
 app:
   mail:
-    from: taskflow.app.dev@gmail.com
+    from: taskflow.app.team@gmail.com
   verification:
     code-expiry-minutes: 10

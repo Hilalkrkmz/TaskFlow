@@ -34,7 +34,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // React dev sunucusunun adresi. Buradan gelen isteklere izin veriyoruz.
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173","null"));
 
         // Hangi HTTP metotlarına izin var (GET, POST, PATCH, DELETE hepsini kullanıyoruz).
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
@@ -51,6 +51,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))//az önce tanımladığımız CORS ayarını devreye sok
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))//sunucu kullanıcıyı hafızasında tutmayacak
                 .authorizeHttpRequests(auth -> auth
@@ -64,4 +65,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-

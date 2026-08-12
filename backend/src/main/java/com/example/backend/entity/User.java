@@ -35,11 +35,11 @@ public class User {
     private boolean enabled = false;
 
     @Column(nullable = false)
-    private LocalDateTime cretaedAt;
+    private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate(){
-        this.cretaedAt=LocalDateTime.now();
+        this.createdAt=LocalDateTime.now();
     }
 }
 
