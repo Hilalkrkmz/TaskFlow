@@ -46,7 +46,7 @@ function VerifyEmail({ email, onVerifySuccess, onBackToLogin }) {
         <div className="auth-page">
             <div className="auth-card">
                 <h2 className="auth-title">Verify your email</h2>
-                <p className="auth-switch-text" style={{ marginTop: 0, marginBottom: 16 }}>
+                <p className="auth-subtitle">
                     We sent a 6-digit code to <strong>{email}</strong>
                 </p>
 

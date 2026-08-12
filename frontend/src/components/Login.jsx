@@ -45,7 +45,8 @@ function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword }) {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <h2 className="auth-title">Log in to TaskFlow</h2>
+                <h2 className="auth-title">Welcome back</h2>
+                <p className="auth-subtitle">Log in to continue to TaskFlow</p>
  
                 <form onSubmit={handleLogin}>
                     <label className="auth-label">Email</label>

@@ -37,7 +37,8 @@ function Register({ onRegisterSubmitted, onSwitchToLogin }) {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <h2 className="auth-title">Create your TaskFlow account</h2>
+                <h2 className="auth-title">Create your account</h2>
+                <p className="auth-subtitle">Start managing your tasks with TaskFlow</p>
 
                 <form onSubmit={handleRegister}>
                     <label className="auth-label">Full Name</label>

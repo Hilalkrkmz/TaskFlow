@@ -82,6 +82,11 @@ function ForgotPassword({ onBackToLogin }) {
                     {step === 2 && "Enter verification code"}
                     {step === 3 && "Set a new password"}
                 </h2>
+                <p className="auth-subtitle">
+                    {step === 1 && "We'll email you a code to reset your password"}
+                    {step === 2 && <>We sent a code to <strong>{email}</strong></>}
+                    {step === 3 && "Choose a new password for your account"}
+                </p>
 
                 {step === 1 && (
                     <form onSubmit={handleSendCode}>
@@ -104,11 +109,7 @@ function ForgotPassword({ onBackToLogin }) {
 
                 {step === 2 && (
                     <form onSubmit={handleVerifyCode}>
-                        <p className="auth-switch-text" style={{ marginTop: 0, marginBottom: 16 }}>
-                            We sent a code to <strong>{email}</strong>
-                        </p>
-
-                        <label className="auth-label" style={{ textAlign: "center" }}>Verification Code</label>
+                        <label className="auth-label" style={{ textAlign: "center", marginTop: 0 }}>Verification Code</label>
                         <OtpInput length={6} value={code} onChange={setCode} />
 
                         {error && <p className="auth-error" style={{ textAlign: "center" }}>{error}</p>}
