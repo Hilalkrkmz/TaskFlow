@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
     View,
     Text,
@@ -9,6 +9,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
 
@@ -53,9 +54,11 @@ function HomeScreen() {
         }
     }, []);
 
-    useEffect(() => {
-        fetchTasks();
-    }, [fetchTasks]);
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+        }, [fetchTasks])
+    );
 
     const addTask = async () => {
         if (!text.trim()) return;
