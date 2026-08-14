@@ -1,32 +1,25 @@
 import { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import ScrollableTabBar from "./ScrollableTabBar";
 import HomeScreen from "../screens/HomeScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import NotesScreen from "../screens/NotesScreen";
 import FocusScreen from "../screens/FocusScreen";
+import StatisticsScreen from "../screens/StatisticsScreen";
+import ThemesScreen from "../screens/ThemesScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import VerifyEmailScreen from "../screens/VerifyEmailScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import apiClient from "../api/client";
 import { getToken, deleteToken } from "../auth/tokenStorage";
-
-// Web'deki Sidebar.jsx'in 8 ögesinin (Home/Calendar/Notes/Focus/Statistics/
-// Themes/Profile/Settings) mobildeki karşılığı. Telefon ekranında 8 sekme
-// sığmaz, bu yüzden en önemli 5'i (Home/Calendar/Notes/Focus/Profile) alt tab
-// bar'da; Statistics/Themes/Settings ileride ayrı bir adımda planlanacak.
-const TAB_ICONS = {
-    Home: "home",
-    Calendar: "calendar",
-    Notes: "document-text",
-    Focus: "timer",
-    Profile: "person",
-};
+import { ThemeProvider } from "../theme/ThemeContext";
+import ThemeDecoration from "../components/ThemeDecoration";
 
 // Web'deki App.jsx'teki `currentUser` state mantığının RN karşılığı:
 // token yoksa/gecersizse AuthStack (Login/Register/VerifyEmail/ForgotPassword),
@@ -50,26 +43,21 @@ function AuthStack({ onAuthSuccess }) {
     );
 }
 
-function AppStack({ currentUser, onLogout }) {
+function AppStack({ currentUser, onLogout, onThemeChange }) {
     return (
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ color, size, focused }) => (
-                    <Ionicons
-                        name={`${TAB_ICONS[route.name]}${focused ? "" : "-outline"}`}
-                        size={size}
-                        color={color}
-                    />
-                ),
-            })}
-        >
+        <Tab.Navigator tabBar={(props) => <ScrollableTabBar {...props} />}>
             <Tab.Screen name="Home" component={HomeScreen} options={{ title: "TaskFlow" }} />
             <Tab.Screen name="Calendar" component={CalendarScreen} />
             <Tab.Screen name="Notes" component={NotesScreen} />
             <Tab.Screen name="Focus" component={FocusScreen} />
+            <Tab.Screen name="Statistics" component={StatisticsScreen} />
+            <Tab.Screen name="Themes">
+                {(props) => <ThemesScreen {...props} onThemeChange={onThemeChange} />}
+            </Tab.Screen>
             <Tab.Screen name="Profile">
                 {(props) => <ProfileScreen {...props} currentUser={currentUser} onLogout={onLogout} />}
             </Tab.Screen>
+            <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
     );
 }
@@ -110,6 +98,10 @@ function RootNavigator() {
         setCurrentUser(null);
     };
 
+    const handleThemeChange = (theme) => {
+        setCurrentUser((prev) => (prev ? { ...prev, theme } : prev));
+    };
+
     if (authChecking) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -119,14 +111,31 @@ function RootNavigator() {
     }
 
     return (
-        <NavigationContainer>
-            {currentUser ? (
-                <AppStack currentUser={currentUser} onLogout={handleLogout} />
-            ) : (
-                <AuthStack onAuthSuccess={handleAuthSuccess} />
-            )}
-        </NavigationContainer>
+        <ThemeProvider initialTheme={currentUser?.theme}>
+            <NavigationContainer>
+                {currentUser ? (
+                    <View style={styles.appContainer}>
+                        <AppStack
+                            currentUser={currentUser}
+                            onLogout={handleLogout}
+                            onThemeChange={handleThemeChange}
+                        />
+                        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+                            <ThemeDecoration />
+                        </View>
+                    </View>
+                ) : (
+                    <AuthStack onAuthSuccess={handleAuthSuccess} />
+                )}
+            </NavigationContainer>
+        </ThemeProvider>
     );
 }
+
+const styles = StyleSheet.create({
+    appContainer: {
+        flex: 1,
+    },
+});
 
 export default RootNavigator;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
     View,
     Text,
@@ -9,12 +9,16 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiClient from "../api/client";
+import { useTheme } from "../theme/ThemeContext";
 
 // 3 adım:
 // step 1: email gir -> kod gönderilsin
 // step 2: kodu gir -> backend'e "geçerli mi" diye sor, geçerliyse step 3'e geç
 // step 3: yeni şifre + tekrar gir -> gerçekten değiştir
 function ForgotPasswordScreen({ navigation }) {
+    const { colors } = useTheme();
+    const styles = useMemo(() => createStyles(colors), [colors]);
+
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState("");
     const [code, setCode] = useState("");
@@ -114,7 +118,7 @@ function ForgotPasswordScreen({ navigation }) {
                             disabled={loading}
                         >
                             {loading ? (
-                                <ActivityIndicator color="#fff" />
+                                <ActivityIndicator color={colors.accentContrast} />
                             ) : (
                                 <Text style={styles.buttonText}>Send Code</Text>
                             )}
@@ -142,7 +146,7 @@ function ForgotPasswordScreen({ navigation }) {
                             disabled={loading || code.length !== 6}
                         >
                             {loading ? (
-                                <ActivityIndicator color="#fff" />
+                                <ActivityIndicator color={colors.accentContrast} />
                             ) : (
                                 <Text style={styles.buttonText}>Verify Code</Text>
                             )}
@@ -179,7 +183,7 @@ function ForgotPasswordScreen({ navigation }) {
                             disabled={loading}
                         >
                             {loading ? (
-                                <ActivityIndicator color="#fff" />
+                                <ActivityIndicator color={colors.accentContrast} />
                             ) : (
                                 <Text style={styles.buttonText}>Reset Password</Text>
                             )}
@@ -197,97 +201,101 @@ function ForgotPasswordScreen({ navigation }) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-        justifyContent: "center",
-        padding: 24,
-    },
-    card: {
-        width: "100%",
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "600",
-        color: "#1a1a18",
-        marginBottom: 4,
-        textAlign: "center",
-    },
-    subtitle: {
-        fontSize: 14,
-        color: "#6b6a65",
-        marginBottom: 24,
-        textAlign: "center",
-    },
-    bold: {
-        fontWeight: "600",
-        color: "#1a1a18",
-    },
-    label: {
-        fontSize: 13,
-        color: "#1a1a18",
-        marginBottom: 6,
-        marginTop: 12,
-    },
-    centerText: {
-        textAlign: "center",
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 15,
-        color: "#1a1a18",
-    },
-    codeInput: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 22,
-        letterSpacing: 8,
-        color: "#1a1a18",
-        textAlign: "center",
-    },
-    error: {
-        color: "#c0392b",
-        fontSize: 13,
-        marginTop: 12,
-    },
-    info: {
-        color: "#2e7d32",
-        fontSize: 13,
-        marginTop: 12,
-    },
-    button: {
-        backgroundColor: "#1a1a18",
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: "center",
-        marginTop: 20,
-    },
-    buttonDisabled: {
-        opacity: 0.6,
-    },
-    buttonText: {
-        color: "#ffffff",
-        fontSize: 15,
-        fontWeight: "600",
-    },
-    switchText: {
-        textAlign: "center",
-        fontSize: 13,
-        color: "#6b6a65",
-        marginTop: 16,
-    },
-    switchLink: {
-        color: "#1a1a18",
-        fontWeight: "600",
-    },
-});
+function createStyles(colors) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.bg,
+            justifyContent: "center",
+            padding: 24,
+        },
+        card: {
+            width: "100%",
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "600",
+            color: colors.text,
+            marginBottom: 4,
+            textAlign: "center",
+        },
+        subtitle: {
+            fontSize: 14,
+            color: colors.textSecondary,
+            marginBottom: 24,
+            textAlign: "center",
+        },
+        bold: {
+            fontWeight: "600",
+            color: colors.text,
+        },
+        label: {
+            fontSize: 13,
+            color: colors.text,
+            marginBottom: 6,
+            marginTop: 12,
+        },
+        centerText: {
+            textAlign: "center",
+        },
+        input: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 15,
+            color: colors.text,
+            backgroundColor: colors.surface,
+        },
+        codeInput: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 22,
+            letterSpacing: 8,
+            color: colors.text,
+            textAlign: "center",
+            backgroundColor: colors.surface,
+        },
+        error: {
+            color: "#c0392b",
+            fontSize: 13,
+            marginTop: 12,
+        },
+        info: {
+            color: "#2f8a5c",
+            fontSize: 13,
+            marginTop: 12,
+        },
+        button: {
+            backgroundColor: colors.accent,
+            borderRadius: 8,
+            paddingVertical: 12,
+            alignItems: "center",
+            marginTop: 20,
+        },
+        buttonDisabled: {
+            opacity: 0.6,
+        },
+        buttonText: {
+            color: colors.accentContrast,
+            fontSize: 15,
+            fontWeight: "600",
+        },
+        switchText: {
+            textAlign: "center",
+            fontSize: 13,
+            color: colors.textSecondary,
+            marginTop: 16,
+        },
+        switchLink: {
+            color: colors.text,
+            fontWeight: "600",
+        },
+    });
+}
 
 export default ForgotPasswordScreen;

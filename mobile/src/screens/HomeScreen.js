@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
     View,
     Text,
@@ -12,15 +12,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import { useTheme } from "../theme/ThemeContext";
 
 const PRIORITIES = ["high", "medium", "low"];
 const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
-
-const PRIORITY_COLORS = {
-    high: "#c0392b",
-    medium: "#b8860b",
-    low: "#2e7d32",
-};
 
 const FILTERS = [
     { key: "all", label: "All" },
@@ -34,6 +29,17 @@ const SORTS = [
 ];
 
 function HomeScreen() {
+    const { colors } = useTheme();
+    const styles = useMemo(() => createStyles(colors), [colors]);
+    const priorityColors = useMemo(
+        () => ({
+            high: colors.priorityHighText,
+            medium: colors.priorityMediumText,
+            low: colors.priorityLowText,
+        }),
+        [colors]
+    );
+
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [text, setText] = useState("");
@@ -145,10 +151,10 @@ function HomeScreen() {
                         onSubmitEditing={saveEdit}
                     />
                     <Pressable onPress={saveEdit}>
-                        <Ionicons name="checkmark" size={20} color="#2e7d32" />
+                        <Ionicons name="checkmark" size={20} color={colors.statCompleted} />
                     </Pressable>
                     <Pressable onPress={cancelEdit}>
-                        <Ionicons name="close" size={20} color="#6b6a65" />
+                        <Ionicons name="close" size={20} color={colors.textSecondary} />
                     </Pressable>
                 </View>
             );
@@ -160,23 +166,25 @@ function HomeScreen() {
                     style={[styles.checkbox, item.completed && styles.checkboxChecked]}
                     onPress={() => toggleTask(item)}
                 >
-                    {item.completed && <Ionicons name="checkmark" size={16} color="#ffffff" />}
+                    {item.completed && (
+                        <Ionicons name="checkmark" size={16} color={colors.accentContrast} />
+                    )}
                 </Pressable>
 
                 <Text style={[styles.taskText, item.completed && styles.taskTextDone]}>
                     {item.text}
                 </Text>
 
-                <View style={[styles.priorityDot, { backgroundColor: PRIORITY_COLORS[item.priority] }]} />
+                <View style={[styles.priorityDot, { backgroundColor: priorityColors[item.priority] }]} />
 
                 {!item.completed && (
                     <Pressable onPress={() => startEdit(item)}>
-                        <Ionicons name="pencil-outline" size={18} color="#6b6a65" />
+                        <Ionicons name="pencil-outline" size={18} color={colors.textSecondary} />
                     </Pressable>
                 )}
 
                 <Pressable onPress={() => deleteTask(item.id)}>
-                    <Ionicons name="trash-outline" size={18} color="#6b6a65" />
+                    <Ionicons name="trash-outline" size={18} color={colors.textSecondary} />
                 </Pressable>
             </View>
         );
@@ -205,6 +213,7 @@ function HomeScreen() {
                 <TextInput
                     style={styles.input}
                     placeholder="What do you want to do?"
+                    placeholderTextColor={colors.textMuted}
                     value={text}
                     onChangeText={setText}
                     onSubmitEditing={addTask}
@@ -230,7 +239,7 @@ function HomeScreen() {
                 </View>
 
                 <Pressable style={styles.addButton} onPress={addTask}>
-                    <Ionicons name="add" size={18} color="#ffffff" />
+                    <Ionicons name="add" size={18} color={colors.accentContrast} />
                     <Text style={styles.addButtonText}>Add Task</Text>
                 </Pressable>
             </View>
@@ -300,215 +309,220 @@ function HomeScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-    },
-    loadingContainer: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    listContent: {
-        paddingHorizontal: 20,
-        paddingBottom: 24,
-    },
-    header: {
-        paddingTop: 12,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "600",
-        color: "#1a1a18",
-        marginBottom: 16,
-    },
-    statsRow: {
-        flexDirection: "row",
-        gap: 10,
-        marginBottom: 20,
-    },
-    statCard: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: "center",
-    },
-    statValue: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: "#1a1a18",
-    },
-    statLabel: {
-        fontSize: 12,
-        color: "#6b6a65",
-        marginTop: 2,
-    },
-    form: {
-        marginBottom: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 15,
-        color: "#1a1a18",
-        marginBottom: 10,
-    },
-    priorityPicker: {
-        flexDirection: "row",
-        gap: 8,
-        marginBottom: 10,
-    },
-    priorityPill: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingVertical: 8,
-        alignItems: "center",
-    },
-    priorityPillActive: {
-        backgroundColor: "#1a1a18",
-        borderColor: "#1a1a18",
-    },
-    priorityPillText: {
-        fontSize: 13,
-        color: "#1a1a18",
-    },
-    priorityPillTextActive: {
-        color: "#ffffff",
-        fontWeight: "600",
-    },
-    addButton: {
-        flexDirection: "row",
-        gap: 6,
-        backgroundColor: "#1a1a18",
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    addButtonText: {
-        color: "#ffffff",
-        fontSize: 15,
-        fontWeight: "600",
-    },
-    listHeaderRow: {
-        marginBottom: 10,
-    },
-    listTitle: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#1a1a18",
-    },
-    filterRow: {
-        flexDirection: "row",
-        gap: 8,
-        marginBottom: 8,
-    },
-    filterPill: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 20,
-        paddingVertical: 6,
-        paddingHorizontal: 14,
-    },
-    filterPillActive: {
-        backgroundColor: "#1a1a18",
-        borderColor: "#1a1a18",
-    },
-    filterPillText: {
-        fontSize: 13,
-        color: "#1a1a18",
-    },
-    filterPillTextActive: {
-        color: "#ffffff",
-        fontWeight: "600",
-    },
-    sortRow: {
-        flexDirection: "row",
-        gap: 8,
-        marginBottom: 14,
-    },
-    sortPill: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 20,
-        paddingVertical: 6,
-        paddingHorizontal: 14,
-    },
-    sortPillActive: {
-        backgroundColor: "#efeee9",
-        borderColor: "#1a1a18",
-    },
-    sortPillText: {
-        fontSize: 12,
-        color: "#6b6a65",
-    },
-    sortPillTextActive: {
-        color: "#1a1a18",
-        fontWeight: "600",
-    },
-    taskRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 12,
-        marginBottom: 8,
-    },
-    checkbox: {
-        width: 22,
-        height: 22,
-        borderRadius: 6,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        backgroundColor: "#ffffff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    checkboxChecked: {
-        backgroundColor: "#1a1a18",
-        borderColor: "#1a1a18",
-    },
-    taskText: {
-        flex: 1,
-        fontSize: 15,
-        color: "#1a1a18",
-    },
-    taskTextDone: {
-        textDecorationLine: "line-through",
-        color: "#a9a8a3",
-    },
-    priorityDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-    },
-    editInput: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 6,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        fontSize: 15,
-        color: "#1a1a18",
-    },
-    emptyText: {
-        textAlign: "center",
-        color: "#6b6a65",
-        fontSize: 14,
-        marginTop: 20,
-    },
-});
+function createStyles(colors) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.bg,
+        },
+        loadingContainer: {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        listContent: {
+            paddingHorizontal: 20,
+            paddingBottom: 24,
+        },
+        header: {
+            paddingTop: 12,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "600",
+            color: colors.text,
+            marginBottom: 16,
+        },
+        statsRow: {
+            flexDirection: "row",
+            gap: 10,
+            marginBottom: 20,
+        },
+        statCard: {
+            flex: 1,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingVertical: 12,
+            alignItems: "center",
+            backgroundColor: colors.surface,
+        },
+        statValue: {
+            fontSize: 20,
+            fontWeight: "700",
+            color: colors.text,
+        },
+        statLabel: {
+            fontSize: 12,
+            color: colors.textSecondary,
+            marginTop: 2,
+        },
+        form: {
+            marginBottom: 20,
+        },
+        input: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 15,
+            color: colors.text,
+            marginBottom: 10,
+            backgroundColor: colors.surface,
+        },
+        priorityPicker: {
+            flexDirection: "row",
+            gap: 8,
+            marginBottom: 10,
+        },
+        priorityPill: {
+            flex: 1,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingVertical: 8,
+            alignItems: "center",
+        },
+        priorityPillActive: {
+            backgroundColor: colors.accent,
+            borderColor: colors.accent,
+        },
+        priorityPillText: {
+            fontSize: 13,
+            color: colors.text,
+        },
+        priorityPillTextActive: {
+            color: colors.accentContrast,
+            fontWeight: "600",
+        },
+        addButton: {
+            flexDirection: "row",
+            gap: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 8,
+            paddingVertical: 12,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        addButtonText: {
+            color: colors.accentContrast,
+            fontSize: 15,
+            fontWeight: "600",
+        },
+        listHeaderRow: {
+            marginBottom: 10,
+        },
+        listTitle: {
+            fontSize: 16,
+            fontWeight: "600",
+            color: colors.text,
+        },
+        filterRow: {
+            flexDirection: "row",
+            gap: 8,
+            marginBottom: 8,
+        },
+        filterPill: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 20,
+            paddingVertical: 6,
+            paddingHorizontal: 14,
+        },
+        filterPillActive: {
+            backgroundColor: colors.accent,
+            borderColor: colors.accent,
+        },
+        filterPillText: {
+            fontSize: 13,
+            color: colors.text,
+        },
+        filterPillTextActive: {
+            color: colors.accentContrast,
+            fontWeight: "600",
+        },
+        sortRow: {
+            flexDirection: "row",
+            gap: 8,
+            marginBottom: 14,
+        },
+        sortPill: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 20,
+            paddingVertical: 6,
+            paddingHorizontal: 14,
+        },
+        sortPillActive: {
+            backgroundColor: colors.surfaceMuted,
+            borderColor: colors.accent,
+        },
+        sortPillText: {
+            fontSize: 12,
+            color: colors.textSecondary,
+        },
+        sortPillTextActive: {
+            color: colors.text,
+            fontWeight: "600",
+        },
+        taskRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            marginBottom: 8,
+            backgroundColor: colors.surface,
+        },
+        checkbox: {
+            width: 22,
+            height: 22,
+            borderRadius: 6,
+            borderWidth: 1,
+            borderColor: colors.borderStrong,
+            backgroundColor: colors.surface,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        checkboxChecked: {
+            backgroundColor: colors.accent,
+            borderColor: colors.accent,
+        },
+        taskText: {
+            flex: 1,
+            fontSize: 15,
+            color: colors.text,
+        },
+        taskTextDone: {
+            textDecorationLine: "line-through",
+            color: colors.textMuted,
+        },
+        priorityDot: {
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+        },
+        editInput: {
+            flex: 1,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 6,
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            fontSize: 15,
+            color: colors.text,
+        },
+        emptyText: {
+            textAlign: "center",
+            color: colors.textSecondary,
+            fontSize: 14,
+            marginTop: 20,
+        },
+    });
+}
 
 export default HomeScreen;

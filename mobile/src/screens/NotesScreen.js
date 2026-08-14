@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     View,
     Text,
@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import { useTheme } from "../theme/ThemeContext";
 
 function formatDate(isoString) {
     const d = new Date(isoString);
@@ -18,6 +19,9 @@ function formatDate(isoString) {
 }
 
 function NotesScreen() {
+    const { colors } = useTheme();
+    const styles = useMemo(() => createStyles(colors), [colors]);
+
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [text, setText] = useState("");
@@ -114,10 +118,10 @@ function NotesScreen() {
                     <Text style={styles.noteDate}>{formatDate(item.createdAt)}</Text>
                     <View style={styles.noteActions}>
                         <Pressable onPress={() => startEdit(item)}>
-                            <Ionicons name="pencil-outline" size={18} color="#6b6a65" />
+                            <Ionicons name="pencil-outline" size={18} color={colors.textSecondary} />
                         </Pressable>
                         <Pressable onPress={() => deleteNote(item.id)}>
-                            <Ionicons name="trash-outline" size={18} color="#6b6a65" />
+                            <Ionicons name="trash-outline" size={18} color={colors.textSecondary} />
                         </Pressable>
                     </View>
                 </View>
@@ -133,13 +137,14 @@ function NotesScreen() {
                 <TextInput
                     style={styles.textarea}
                     placeholder="Write a quick note..."
+                    placeholderTextColor={colors.textMuted}
                     value={text}
                     onChangeText={setText}
                     multiline
                     numberOfLines={3}
                 />
                 <Pressable style={styles.addButton} onPress={addNote}>
-                    <Ionicons name="add" size={18} color="#ffffff" />
+                    <Ionicons name="add" size={18} color={colors.accentContrast} />
                     <Text style={styles.addButtonText}>Add Note</Text>
                 </Pressable>
             </View>
@@ -172,105 +177,109 @@ function NotesScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-    },
-    loadingContainer: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    listContent: {
-        paddingHorizontal: 20,
-        paddingBottom: 24,
-    },
-    header: {
-        paddingTop: 12,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "600",
-        color: "#1a1a18",
-        marginBottom: 16,
-    },
-    form: {
-        marginBottom: 20,
-    },
-    textarea: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 15,
-        color: "#1a1a18",
-        marginBottom: 10,
-        minHeight: 80,
-        textAlignVertical: "top",
-    },
-    addButton: {
-        flexDirection: "row",
-        gap: 6,
-        backgroundColor: "#1a1a18",
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    addButtonText: {
-        color: "#ffffff",
-        fontSize: 15,
-        fontWeight: "600",
-    },
-    noteCard: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        padding: 14,
-        marginBottom: 10,
-    },
-    noteText: {
-        fontSize: 14,
-        color: "#1a1a18",
-        marginBottom: 10,
-    },
-    noteFooter: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    noteDate: {
-        fontSize: 12,
-        color: "#6b6a65",
-    },
-    noteActions: {
-        flexDirection: "row",
-        gap: 12,
-    },
-    editTextarea: {
-        marginBottom: 10,
-    },
-    editActionBtn: {
-        marginRight: 16,
-    },
-    editSaveText: {
-        fontSize: 13,
-        fontWeight: "600",
-        color: "#2e7d32",
-    },
-    editCancelText: {
-        fontSize: 13,
-        fontWeight: "600",
-        color: "#6b6a65",
-    },
-    emptyText: {
-        textAlign: "center",
-        color: "#6b6a65",
-        fontSize: 14,
-        marginTop: 20,
-    },
-});
+function createStyles(colors) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.bg,
+        },
+        loadingContainer: {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        listContent: {
+            paddingHorizontal: 20,
+            paddingBottom: 24,
+        },
+        header: {
+            paddingTop: 12,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "600",
+            color: colors.text,
+            marginBottom: 16,
+        },
+        form: {
+            marginBottom: 20,
+        },
+        textarea: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 15,
+            color: colors.text,
+            marginBottom: 10,
+            minHeight: 80,
+            textAlignVertical: "top",
+            backgroundColor: colors.surface,
+        },
+        addButton: {
+            flexDirection: "row",
+            gap: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 8,
+            paddingVertical: 12,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        addButtonText: {
+            color: colors.accentContrast,
+            fontSize: 15,
+            fontWeight: "600",
+        },
+        noteCard: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            padding: 14,
+            marginBottom: 10,
+            backgroundColor: colors.surface,
+        },
+        noteText: {
+            fontSize: 14,
+            color: colors.text,
+            marginBottom: 10,
+        },
+        noteFooter: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+        },
+        noteDate: {
+            fontSize: 12,
+            color: colors.textSecondary,
+        },
+        noteActions: {
+            flexDirection: "row",
+            gap: 12,
+        },
+        editTextarea: {
+            marginBottom: 10,
+        },
+        editActionBtn: {
+            marginRight: 16,
+        },
+        editSaveText: {
+            fontSize: 13,
+            fontWeight: "600",
+            color: colors.statCompleted,
+        },
+        editCancelText: {
+            fontSize: 13,
+            fontWeight: "600",
+            color: colors.textSecondary,
+        },
+        emptyText: {
+            textAlign: "center",
+            color: colors.textSecondary,
+            fontSize: 14,
+            marginTop: 20,
+        },
+    });
+}
 
 export default NotesScreen;

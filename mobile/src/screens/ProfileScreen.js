@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import { useTheme } from "../theme/ThemeContext";
 
 function ProfileScreen({ currentUser, onLogout }) {
+    const { colors } = useTheme();
+    const styles = useMemo(() => createStyles(colors), [colors]);
+
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -63,7 +67,7 @@ function ProfileScreen({ currentUser, onLogout }) {
                             style={styles.actionBtn}
                             onPress={() => setShowChangePassword((v) => !v)}
                         >
-                            <Ionicons name="key-outline" size={15} color="#1a1a18" />
+                            <Ionicons name="key-outline" size={15} color={colors.text} />
                             <Text style={styles.actionBtnText}>Change</Text>
                         </Pressable>
                     </View>
@@ -73,6 +77,7 @@ function ProfileScreen({ currentUser, onLogout }) {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Current password"
+                                placeholderTextColor={colors.textMuted}
                                 value={oldPassword}
                                 onChangeText={setOldPassword}
                                 secureTextEntry
@@ -81,6 +86,7 @@ function ProfileScreen({ currentUser, onLogout }) {
                             <TextInput
                                 style={styles.input}
                                 placeholder="New password"
+                                placeholderTextColor={colors.textMuted}
                                 value={newPassword}
                                 onChangeText={setNewPassword}
                                 secureTextEntry
@@ -89,6 +95,7 @@ function ProfileScreen({ currentUser, onLogout }) {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Confirm new password"
+                                placeholderTextColor={colors.textMuted}
                                 value={confirmNewPassword}
                                 onChangeText={setConfirmNewPassword}
                                 secureTextEntry
@@ -104,7 +111,7 @@ function ProfileScreen({ currentUser, onLogout }) {
                                 disabled={loading}
                             >
                                 {loading ? (
-                                    <ActivityIndicator color="#ffffff" />
+                                    <ActivityIndicator color={colors.accentContrast} />
                                 ) : (
                                     <Text style={styles.submitBtnText}>Update Password</Text>
                                 )}
@@ -121,123 +128,126 @@ function ProfileScreen({ currentUser, onLogout }) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-    },
-    content: {
-        padding: 24,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "600",
-        color: "#1a1a18",
-        marginBottom: 20,
-    },
-    card: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 16,
-    },
-    field: {
-        marginBottom: 12,
-    },
-    fieldLabel: {
-        fontSize: 12,
-        color: "#6b6a65",
-        marginBottom: 2,
-    },
-    fieldValue: {
-        fontSize: 15,
-        color: "#1a1a18",
-    },
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    rowText: {
-        flex: 1,
-        marginRight: 12,
-    },
-    rowTitle: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#1a1a18",
-    },
-    rowDesc: {
-        fontSize: 12,
-        color: "#6b6a65",
-        marginTop: 2,
-    },
-    actionBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-    },
-    actionBtnText: {
-        fontSize: 13,
-        fontWeight: "600",
-        color: "#1a1a18",
-    },
-    passwordForm: {
-        marginTop: 16,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 15,
-        color: "#1a1a18",
-        marginBottom: 10,
-    },
-    error: {
-        color: "#c0392b",
-        fontSize: 13,
-        marginBottom: 10,
-    },
-    success: {
-        color: "#2e7d32",
-        fontSize: 13,
-        marginBottom: 10,
-    },
-    submitBtn: {
-        backgroundColor: "#1a1a18",
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: "center",
-    },
-    submitBtnDisabled: {
-        opacity: 0.6,
-    },
-    submitBtnText: {
-        color: "#ffffff",
-        fontSize: 15,
-        fontWeight: "600",
-    },
-    logoutButton: {
-        marginTop: 8,
-        borderWidth: 1,
-        borderColor: "#d9d8d3",
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: "center",
-    },
-    logoutText: {
-        fontSize: 15,
-        fontWeight: "600",
-        color: "#c0392b",
-    },
-});
+function createStyles(colors) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.bg,
+        },
+        content: {
+            padding: 24,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "600",
+            color: colors.text,
+            marginBottom: 20,
+        },
+        card: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 16,
+            backgroundColor: colors.surface,
+        },
+        field: {
+            marginBottom: 12,
+        },
+        fieldLabel: {
+            fontSize: 12,
+            color: colors.textSecondary,
+            marginBottom: 2,
+        },
+        fieldValue: {
+            fontSize: 15,
+            color: colors.text,
+        },
+        row: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+        },
+        rowText: {
+            flex: 1,
+            marginRight: 12,
+        },
+        rowTitle: {
+            fontSize: 14,
+            fontWeight: "600",
+            color: colors.text,
+        },
+        rowDesc: {
+            fontSize: 12,
+            color: colors.textSecondary,
+            marginTop: 2,
+        },
+        actionBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingVertical: 8,
+            paddingHorizontal: 12,
+        },
+        actionBtnText: {
+            fontSize: 13,
+            fontWeight: "600",
+            color: colors.text,
+        },
+        passwordForm: {
+            marginTop: 16,
+        },
+        input: {
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 15,
+            color: colors.text,
+            marginBottom: 10,
+        },
+        error: {
+            color: "#c0392b",
+            fontSize: 13,
+            marginBottom: 10,
+        },
+        success: {
+            color: "#2f8a5c",
+            fontSize: 13,
+            marginBottom: 10,
+        },
+        submitBtn: {
+            backgroundColor: colors.accent,
+            borderRadius: 8,
+            paddingVertical: 12,
+            alignItems: "center",
+        },
+        submitBtnDisabled: {
+            opacity: 0.6,
+        },
+        submitBtnText: {
+            color: colors.accentContrast,
+            fontSize: 15,
+            fontWeight: "600",
+        },
+        logoutButton: {
+            marginTop: 8,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 8,
+            paddingVertical: 12,
+            alignItems: "center",
+        },
+        logoutText: {
+            fontSize: 15,
+            fontWeight: "600",
+            color: "#c0392b",
+        },
+    });
+}
 
 export default ProfileScreen;

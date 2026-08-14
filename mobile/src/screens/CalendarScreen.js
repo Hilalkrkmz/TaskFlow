@@ -4,12 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
-
-// Renkler frontend/src/index.css'teki [data-theme="white"] (varsayılan tema)
-// --heat-0..4 değerleriyle birebir aynı - mobile henüz tema desteklemiyor,
-// tek tema (white) kullanıyoruz.
-const HEAT_COLORS = ["#f0f0ec", "#d3ecdc", "#9fd6b6", "#5fb787", "#2f8a5c"];
-const HEAT_TEXT = ["#8f8d86", "#6b6a65", "#ffffff", "#ffffff", "#ffffff"];
+import { useTheme } from "../theme/ThemeContext";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTH_NAMES = [
@@ -39,6 +34,19 @@ function chunk(array, size) {
 }
 
 function CalendarScreen() {
+    const { colors } = useTheme();
+    const styles = useMemo(() => createStyles(colors), [colors]);
+    // Web'deki TaskFlow.css'te heat-0/1 seviyeleri textMuted/textSecondary,
+    // heat-2..4 heatTextDark kullanıyor - birebir aynı eşleme.
+    const heatColors = useMemo(
+        () => [colors.heat0, colors.heat1, colors.heat2, colors.heat3, colors.heat4],
+        [colors]
+    );
+    const heatTextColors = useMemo(
+        () => [colors.textMuted, colors.textSecondary, colors.heatTextDark, colors.heatTextDark, colors.heatTextDark],
+        [colors]
+    );
+
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentMonth, setCurrentMonth] = useState(() => {
@@ -118,10 +126,10 @@ function CalendarScreen() {
                     </Text>
                     <View style={styles.nav}>
                         <Pressable style={styles.navButton} onPress={goToPrevMonth}>
-                            <Ionicons name="chevron-back" size={18} color="#1a1a18" />
+                            <Ionicons name="chevron-back" size={18} color={colors.text} />
                         </Pressable>
                         <Pressable style={styles.navButton} onPress={goToNextMonth}>
-                            <Ionicons name="chevron-forward" size={18} color="#1a1a18" />
+                            <Ionicons name="chevron-forward" size={18} color={colors.text} />
                         </Pressable>
                     </View>
                 </View>
@@ -149,12 +157,12 @@ function CalendarScreen() {
                                     style={[
                                         styles.cell,
                                         styles.dayCell,
-                                        { backgroundColor: HEAT_COLORS[level] },
+                                        { backgroundColor: heatColors[level] },
                                         isSelected && styles.dayCellSelected,
                                     ]}
                                     onPress={() => setSelectedDate(isSelected ? null : key)}
                                 >
-                                    <Text style={[styles.dayNum, { color: HEAT_TEXT[level] }]}>
+                                    <Text style={[styles.dayNum, { color: heatTextColors[level] }]}>
                                         {date.getDate()}
                                     </Text>
                                 </Pressable>
@@ -165,7 +173,7 @@ function CalendarScreen() {
 
                 <View style={styles.legend}>
                     <Text style={styles.legendLabel}>low</Text>
-                    {HEAT_COLORS.map((color, i) => (
+                    {heatColors.map((color, i) => (
                         <View key={i} style={[styles.legendSwatch, { backgroundColor: color }]} />
                     ))}
                     <Text style={styles.legendLabel}>high</Text>
@@ -186,7 +194,7 @@ function CalendarScreen() {
                         ) : (
                             selectedTasks.map((task) => (
                                 <View key={task.id} style={styles.detailRow}>
-                                    <Ionicons name="checkmark-circle" size={15} color="#3a9d63" />
+                                    <Ionicons name="checkmark-circle" size={15} color={colors.statCompleted} />
                                     <Text style={styles.detailText}>{task.text}</Text>
                                 </View>
                             ))
@@ -198,117 +206,119 @@ function CalendarScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-    },
-    loadingContainer: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    content: {
-        padding: 20,
-    },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 16,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: "600",
-        color: "#1a1a18",
-    },
-    nav: {
-        flexDirection: "row",
-        gap: 6,
-    },
-    navButton: {
-        width: 30,
-        height: 30,
-        borderWidth: 1,
-        borderColor: "#d8d6d0",
-        borderRadius: 6,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    weekdayRow: {
-        flexDirection: "row",
-        marginBottom: 4,
-    },
-    weekday: {
-        flex: 1,
-        textAlign: "center",
-        fontSize: 11,
-        color: "#8f8d86",
-    },
-    weekRow: {
-        flexDirection: "row",
-    },
-    cell: {
-        flex: 1,
-        aspectRatio: 1,
-        margin: 2,
-    },
-    dayCell: {
-        borderRadius: 8,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    dayCellSelected: {
-        borderWidth: 2,
-        borderColor: "#1a1a18",
-    },
-    dayNum: {
-        fontSize: 13,
-        fontWeight: "500",
-    },
-    legend: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        marginTop: 16,
-    },
-    legendLabel: {
-        fontSize: 11,
-        color: "#8f8d86",
-    },
-    legendSwatch: {
-        width: 14,
-        height: 14,
-        borderRadius: 4,
-    },
-    detail: {
-        marginTop: 20,
-        borderTopWidth: 1,
-        borderTopColor: "#e5e4e0",
-        paddingTop: 14,
-    },
-    detailTitle: {
-        fontSize: 13,
-        fontWeight: "600",
-        color: "#1a1a18",
-        marginBottom: 8,
-    },
-    detailEmpty: {
-        fontSize: 13,
-        color: "#6b6a65",
-    },
-    detailRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingVertical: 6,
-        borderBottomWidth: 1,
-        borderBottomColor: "#e5e4e0",
-    },
-    detailText: {
-        fontSize: 13,
-        color: "#1a1a18",
-    },
-});
+function createStyles(colors) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.bg,
+        },
+        loadingContainer: {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        content: {
+            padding: 20,
+        },
+        header: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16,
+        },
+        headerTitle: {
+            fontSize: 18,
+            fontWeight: "600",
+            color: colors.text,
+        },
+        nav: {
+            flexDirection: "row",
+            gap: 6,
+        },
+        navButton: {
+            width: 30,
+            height: 30,
+            borderWidth: 1,
+            borderColor: colors.borderStrong,
+            borderRadius: 6,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        weekdayRow: {
+            flexDirection: "row",
+            marginBottom: 4,
+        },
+        weekday: {
+            flex: 1,
+            textAlign: "center",
+            fontSize: 11,
+            color: colors.textMuted,
+        },
+        weekRow: {
+            flexDirection: "row",
+        },
+        cell: {
+            flex: 1,
+            aspectRatio: 1,
+            margin: 2,
+        },
+        dayCell: {
+            borderRadius: 8,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        dayCellSelected: {
+            borderWidth: 2,
+            borderColor: colors.accent,
+        },
+        dayNum: {
+            fontSize: 13,
+            fontWeight: "500",
+        },
+        legend: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            marginTop: 16,
+        },
+        legendLabel: {
+            fontSize: 11,
+            color: colors.textMuted,
+        },
+        legendSwatch: {
+            width: 14,
+            height: 14,
+            borderRadius: 4,
+        },
+        detail: {
+            marginTop: 20,
+            borderTopWidth: 1,
+            borderTopColor: colors.border,
+            paddingTop: 14,
+        },
+        detailTitle: {
+            fontSize: 13,
+            fontWeight: "600",
+            color: colors.text,
+            marginBottom: 8,
+        },
+        detailEmpty: {
+            fontSize: 13,
+            color: colors.textSecondary,
+        },
+        detailRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingVertical: 6,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+        },
+        detailText: {
+            fontSize: 13,
+            color: colors.text,
+        },
+    });
+}
 
 export default CalendarScreen;
