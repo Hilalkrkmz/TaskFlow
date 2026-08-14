@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
 
 const PRIORITIES = ["high", "medium", "low"];
+const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
 
 const PRIORITY_COLORS = {
     high: "#c0392b",
@@ -20,11 +21,26 @@ const PRIORITY_COLORS = {
     low: "#2e7d32",
 };
 
+const FILTERS = [
+    { key: "all", label: "All" },
+    { key: "active", label: "Active" },
+    { key: "completed", label: "Completed" },
+];
+
+const SORTS = [
+    { key: "created", label: "Sort: Created" },
+    { key: "priority", label: "Sort: Priority" },
+];
+
 function HomeScreen() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [text, setText] = useState("");
     const [priority, setPriority] = useState("medium");
+    const [filter, setFilter] = useState("all");
+    const [sortBy, setSortBy] = useState("created");
+    const [editingId, setEditingId] = useState(null);
+    const [editText, setEditText] = useState("");
 
     const fetchTasks = useCallback(async () => {
         try {
@@ -74,30 +90,94 @@ function HomeScreen() {
         }
     };
 
+    const startEdit = (task) => {
+        setEditingId(task.id);
+        setEditText(task.text);
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditText("");
+    };
+
+    const saveEdit = async () => {
+        if (!editText.trim()) return;
+
+        try {
+            const response = await apiClient.patch(`/tasks/${editingId}`, { text: editText });
+            setTasks((prev) => prev.map((t) => (t.id === editingId ? response.data : t)));
+            setEditingId(null);
+            setEditText("");
+        } catch (err) {
+            console.error("Görev güncellenemedi:", err);
+        }
+    };
+
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((t) => t.completed).length;
     const remainingTasks = totalTasks - completedTasks;
 
-    const renderTask = ({ item }) => (
-        <View style={styles.taskRow}>
-            <Pressable
-                style={[styles.checkbox, item.completed && styles.checkboxChecked]}
-                onPress={() => toggleTask(item)}
-            >
-                {item.completed && <Ionicons name="checkmark" size={16} color="#ffffff" />}
-            </Pressable>
+    const filteredTasks = tasks.filter((t) => {
+        if (filter === "active") return !t.completed;
+        if (filter === "completed") return t.completed;
+        return true;
+    });
 
-            <Text style={[styles.taskText, item.completed && styles.taskTextDone]}>
-                {item.text}
-            </Text>
+    const sortedTasks = [...filteredTasks].sort((a, b) => {
+        if (sortBy === "priority") {
+            return (PRIORITY_WEIGHT[b.priority] || 0) - (PRIORITY_WEIGHT[a.priority] || 0);
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
 
-            <View style={[styles.priorityDot, { backgroundColor: PRIORITY_COLORS[item.priority] }]} />
+    const renderTask = ({ item }) => {
+        if (item.id === editingId) {
+            return (
+                <View style={styles.taskRow}>
+                    <TextInput
+                        style={styles.editInput}
+                        value={editText}
+                        onChangeText={setEditText}
+                        autoFocus
+                        onSubmitEditing={saveEdit}
+                    />
+                    <Pressable onPress={saveEdit}>
+                        <Ionicons name="checkmark" size={20} color="#2e7d32" />
+                    </Pressable>
+                    <Pressable onPress={cancelEdit}>
+                        <Ionicons name="close" size={20} color="#6b6a65" />
+                    </Pressable>
+                </View>
+            );
+        }
 
-            <Pressable onPress={() => deleteTask(item.id)}>
-                <Ionicons name="trash-outline" size={18} color="#6b6a65" />
-            </Pressable>
-        </View>
-    );
+        return (
+            <View style={styles.taskRow}>
+                <Pressable
+                    style={[styles.checkbox, item.completed && styles.checkboxChecked]}
+                    onPress={() => toggleTask(item)}
+                >
+                    {item.completed && <Ionicons name="checkmark" size={16} color="#ffffff" />}
+                </Pressable>
+
+                <Text style={[styles.taskText, item.completed && styles.taskTextDone]}>
+                    {item.text}
+                </Text>
+
+                <View style={[styles.priorityDot, { backgroundColor: PRIORITY_COLORS[item.priority] }]} />
+
+                {!item.completed && (
+                    <Pressable onPress={() => startEdit(item)}>
+                        <Ionicons name="pencil-outline" size={18} color="#6b6a65" />
+                    </Pressable>
+                )}
+
+                <Pressable onPress={() => deleteTask(item.id)}>
+                    <Ionicons name="trash-outline" size={18} color="#6b6a65" />
+                </Pressable>
+            </View>
+        );
+    };
 
     const ListHeader = (
         <View style={styles.header}>
@@ -152,7 +232,44 @@ function HomeScreen() {
                 </Pressable>
             </View>
 
-            <Text style={styles.listTitle}>My Tasks</Text>
+            <View style={styles.listHeaderRow}>
+                <Text style={styles.listTitle}>My Tasks</Text>
+            </View>
+
+            <View style={styles.filterRow}>
+                {FILTERS.map((f) => (
+                    <Pressable
+                        key={f.key}
+                        style={[styles.filterPill, filter === f.key && styles.filterPillActive]}
+                        onPress={() => setFilter(f.key)}
+                    >
+                        <Text
+                            style={[
+                                styles.filterPillText,
+                                filter === f.key && styles.filterPillTextActive,
+                            ]}
+                        >
+                            {f.label}
+                        </Text>
+                    </Pressable>
+                ))}
+            </View>
+
+            <View style={styles.sortRow}>
+                {SORTS.map((s) => (
+                    <Pressable
+                        key={s.key}
+                        style={[styles.sortPill, sortBy === s.key && styles.sortPillActive]}
+                        onPress={() => setSortBy(s.key)}
+                    >
+                        <Text
+                            style={[styles.sortPillText, sortBy === s.key && styles.sortPillTextActive]}
+                        >
+                            {s.label}
+                        </Text>
+                    </Pressable>
+                ))}
+            </View>
         </View>
     );
 
@@ -169,7 +286,7 @@ function HomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={tasks}
+                data={sortedTasks}
                 keyExtractor={(item) => String(item.id)}
                 renderItem={renderTask}
                 ListHeaderComponent={ListHeader}
@@ -278,11 +395,61 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "600",
     },
+    listHeaderRow: {
+        marginBottom: 10,
+    },
     listTitle: {
         fontSize: 16,
         fontWeight: "600",
         color: "#1a1a18",
-        marginBottom: 10,
+    },
+    filterRow: {
+        flexDirection: "row",
+        gap: 8,
+        marginBottom: 8,
+    },
+    filterPill: {
+        borderWidth: 1,
+        borderColor: "#d9d8d3",
+        borderRadius: 20,
+        paddingVertical: 6,
+        paddingHorizontal: 14,
+    },
+    filterPillActive: {
+        backgroundColor: "#1a1a18",
+        borderColor: "#1a1a18",
+    },
+    filterPillText: {
+        fontSize: 13,
+        color: "#1a1a18",
+    },
+    filterPillTextActive: {
+        color: "#ffffff",
+        fontWeight: "600",
+    },
+    sortRow: {
+        flexDirection: "row",
+        gap: 8,
+        marginBottom: 14,
+    },
+    sortPill: {
+        borderWidth: 1,
+        borderColor: "#d9d8d3",
+        borderRadius: 20,
+        paddingVertical: 6,
+        paddingHorizontal: 14,
+    },
+    sortPillActive: {
+        backgroundColor: "#efeee9",
+        borderColor: "#1a1a18",
+    },
+    sortPillText: {
+        fontSize: 12,
+        color: "#6b6a65",
+    },
+    sortPillTextActive: {
+        color: "#1a1a18",
+        fontWeight: "600",
     },
     taskRow: {
         flexDirection: "row",
@@ -322,6 +489,16 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
+    },
+    editInput: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: "#d9d8d3",
+        borderRadius: 6,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        fontSize: 15,
+        color: "#1a1a18",
     },
     emptyText: {
         textAlign: "center",
