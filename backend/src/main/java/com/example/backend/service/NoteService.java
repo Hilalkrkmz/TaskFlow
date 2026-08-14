@@ -34,6 +34,18 @@ public class NoteService {
         return toResponse(note);
     }
 
+    public NoteResponse updateNote(User user, Long noteId, NoteRequest request) {
+        Note note = noteRepository.findByIdAndUser(noteId, user)
+                .orElseThrow(() -> new ResourceNotFoundException("Note not found"));
+
+        if (request.getText() != null) {
+            note.setText(request.getText());
+        }
+
+        noteRepository.save(note);
+        return toResponse(note);
+    }
+
     public void deleteNote(User user, Long noteId) {
         Note note = noteRepository.findByIdAndUser(noteId, user)
                 .orElseThrow(() -> new ResourceNotFoundException("Note not found"));

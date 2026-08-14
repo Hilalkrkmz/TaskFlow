@@ -36,6 +36,15 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<NoteResponse> updateNote(
+            @AuthenticationPrincipal UserDetailsImpl principal,
+            @PathVariable Long id,
+            @RequestBody NoteRequest request
+    ) {
+        return ResponseEntity.ok(noteService.updateNote(principal.getUser(), id, request));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNote(
             @AuthenticationPrincipal UserDetailsImpl principal,
