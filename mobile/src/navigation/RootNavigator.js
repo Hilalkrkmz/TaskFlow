@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
+import CalendarScreen from "../screens/CalendarScreen";
+import NotesScreen from "../screens/NotesScreen";
+import FocusScreen from "../screens/FocusScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import VerifyEmailScreen from "../screens/VerifyEmailScreen";
@@ -10,11 +16,24 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import apiClient from "../api/client";
 import { getToken, deleteToken } from "../auth/tokenStorage";
 
+// Web'deki Sidebar.jsx'in 8 ögesinin (Home/Calendar/Notes/Focus/Statistics/
+// Themes/Profile/Settings) mobildeki karşılığı. Telefon ekranında 8 sekme
+// sığmaz, bu yüzden en önemli 5'i (Home/Calendar/Notes/Focus/Profile) alt tab
+// bar'da; Statistics/Themes/Settings ileride ayrı bir adımda planlanacak.
+const TAB_ICONS = {
+    Home: "home",
+    Calendar: "calendar",
+    Notes: "document-text",
+    Focus: "timer",
+    Profile: "person",
+};
+
 // Web'deki App.jsx'teki `currentUser` state mantığının RN karşılığı:
 // token yoksa/gecersizse AuthStack (Login/Register/VerifyEmail/ForgotPassword),
 // varsa AppStack (Home ve gelecekte diger ekranlar) gösterilir.
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 function AuthStack({ onAuthSuccess }) {
     return (
@@ -31,13 +50,27 @@ function AuthStack({ onAuthSuccess }) {
     );
 }
 
-function AppStack({ onLogout }) {
+function AppStack({ currentUser, onLogout }) {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Home" options={{ title: "TaskFlow" }}>
-                {(props) => <HomeScreen {...props} onLogout={onLogout} />}
-            </Stack.Screen>
-        </Stack.Navigator>
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size, focused }) => (
+                    <Ionicons
+                        name={`${TAB_ICONS[route.name]}${focused ? "" : "-outline"}`}
+                        size={size}
+                        color={color}
+                    />
+                ),
+            })}
+        >
+            <Tab.Screen name="Home" component={HomeScreen} options={{ title: "TaskFlow" }} />
+            <Tab.Screen name="Calendar" component={CalendarScreen} />
+            <Tab.Screen name="Notes" component={NotesScreen} />
+            <Tab.Screen name="Focus" component={FocusScreen} />
+            <Tab.Screen name="Profile">
+                {(props) => <ProfileScreen {...props} currentUser={currentUser} onLogout={onLogout} />}
+            </Tab.Screen>
+        </Tab.Navigator>
     );
 }
 
@@ -88,7 +121,7 @@ function RootNavigator() {
     return (
         <NavigationContainer>
             {currentUser ? (
-                <AppStack onLogout={handleLogout} />
+                <AppStack currentUser={currentUser} onLogout={handleLogout} />
             ) : (
                 <AuthStack onAuthSuccess={handleAuthSuccess} />
             )}
