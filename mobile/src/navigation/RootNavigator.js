@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import VerifyEmailScreen from "../screens/VerifyEmailScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import apiClient from "../api/client";
 import { getToken, deleteToken } from "../auth/tokenStorage";
 
@@ -25,6 +26,7 @@ function AuthStack({ onAuthSuccess }) {
             <Stack.Screen name="VerifyEmail">
                 {(props) => <VerifyEmailScreen {...props} onVerifySuccess={onAuthSuccess} />}
             </Stack.Screen>
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         </Stack.Navigator>
     );
 }
