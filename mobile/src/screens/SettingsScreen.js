@@ -243,12 +243,14 @@ function createStyles(colors) {
         btn: {
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center",
             gap: 6,
             borderWidth: 1,
             borderColor: colors.border,
             borderRadius: 8,
             paddingVertical: 8,
             paddingHorizontal: 12,
+            minWidth: 100,
         },
         btnText: {
             fontSize: 13,
@@ -258,11 +260,13 @@ function createStyles(colors) {
         dangerBtn: {
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center",
             gap: 6,
             backgroundColor: "#c0392b",
             borderRadius: 8,
             paddingVertical: 8,
             paddingHorizontal: 12,
+            minWidth: 100,
         },
         dangerBtnText: {
             color: "#ffffff",
@@ -279,6 +283,7 @@ function createStyles(colors) {
             borderRadius: 8,
             paddingVertical: 8,
             paddingHorizontal: 12,
+            alignItems: "center",
             justifyContent: "center",
         },
         cancelBtnText: {

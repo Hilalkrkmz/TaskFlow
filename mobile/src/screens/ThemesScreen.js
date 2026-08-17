@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { View, Text, Pressable, ScrollView, StyleSheet } from "react-native";
+import { View, Text, Pressable, ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import apiClient from "../api/client";
 import { useTheme } from "../theme/ThemeContext";
@@ -17,9 +17,18 @@ const THEME_NAMES = {
     mint: "Mint",
 };
 
+const GRID_GAP = 12;
+const CONTENT_PADDING = 20;
+const COLUMNS = 2;
+
 function ThemesScreen({ onThemeChange }) {
     const { themeKey, setThemeKey, colors } = useTheme();
     const styles = useMemo(() => createStyles(colors), [colors]);
+    const { width: screenWidth } = useWindowDimensions();
+    // % + gap kombinasyonu dar ekranlarda tutarsız sarılıyordu (bazen 2,
+    // bazen 3 sütun) - genişliği doğrudan hesaplayıp sabit 2 sütun garantiliyoruz.
+    const cardWidth =
+        (screenWidth - CONTENT_PADDING * 2 - GRID_GAP * (COLUMNS - 1)) / COLUMNS;
 
     const handleSelectTheme = async (key) => {
         setThemeKey(key);
@@ -45,7 +54,7 @@ function ThemesScreen({ onThemeChange }) {
                         return (
                             <Pressable
                                 key={key}
-                                style={[styles.card, isActive && styles.cardActive]}
+                                style={[styles.card, { width: cardWidth }, isActive && styles.cardActive]}
                                 onPress={() => handleSelectTheme(key)}
                             >
                                 <View style={styles.swatchRow}>
@@ -70,7 +79,7 @@ function createStyles(colors) {
             backgroundColor: colors.bg,
         },
         content: {
-            padding: 20,
+            padding: CONTENT_PADDING,
         },
         title: {
             fontSize: 24,
@@ -81,14 +90,13 @@ function createStyles(colors) {
         grid: {
             flexDirection: "row",
             flexWrap: "wrap",
-            gap: 12,
+            gap: GRID_GAP,
         },
         card: {
-            width: "31%",
             borderWidth: 1,
             borderColor: colors.border,
-            borderRadius: 8,
-            padding: 10,
+            borderRadius: 12,
+            padding: 16,
             alignItems: "center",
             backgroundColor: colors.surface,
         },
@@ -98,18 +106,19 @@ function createStyles(colors) {
         },
         swatchRow: {
             flexDirection: "row",
-            gap: 4,
-            marginBottom: 8,
+            gap: 6,
+            marginBottom: 12,
         },
         swatch: {
-            width: 16,
-            height: 16,
-            borderRadius: 4,
+            width: 24,
+            height: 24,
+            borderRadius: 6,
             borderWidth: 1,
             borderColor: "#00000014",
         },
         name: {
-            fontSize: 12,
+            fontSize: 14,
+            fontWeight: "600",
             color: colors.text,
         },
     });

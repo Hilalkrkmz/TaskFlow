@@ -45,7 +45,10 @@ function AuthStack({ onAuthSuccess }) {
 
 function AppStack({ currentUser, onLogout, onThemeChange }) {
     return (
-        <Tab.Navigator tabBar={(props) => <ScrollableTabBar {...props} />}>
+        <Tab.Navigator
+            tabBar={(props) => <ScrollableTabBar {...props} />}
+            screenOptions={{ headerShown: false }}
+        >
             <Tab.Screen name="Home" component={HomeScreen} options={{ title: "TaskFlow" }} />
             <Tab.Screen name="Calendar" component={CalendarScreen} />
             <Tab.Screen name="Notes" component={NotesScreen} />
