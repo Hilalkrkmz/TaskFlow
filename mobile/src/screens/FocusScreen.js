@@ -5,8 +5,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Svg, { Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAudioPlayer } from "expo-audio";
 import apiClient from "../api/client";
 import { useTheme } from "../theme/ThemeContext";
+
+const finishSound = require("../../assets/success.wav");
+const tickSound = require("../../assets/tick.wav");
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -51,6 +55,8 @@ function FocusScreen() {
     const [pickingTask, setPickingTask] = useState(false);
     const [pomodoroLog, setPomodoroLog] = useState({});
     const firstRender = useRef(true);
+    const finishPlayer = useAudioPlayer(finishSound);
+    const tickPlayer = useAudioPlayer(tickSound);
 
     useFocusEffect(
         useCallback(() => {
@@ -80,12 +86,27 @@ function FocusScreen() {
             return;
         }
 
+        // Son 3 saniye (3, 2, 1 gösterilirken) her saniye kısa bir "tık" -
+        // Skip'te tetiklenmiyor çünkü bu efekt sadece isRunning ilerlerken çalışıyor.
+        if (timeLeft <= 3) {
+            tickPlayer.seekTo(0);
+            tickPlayer.play();
+        }
+
         const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
         return () => clearTimeout(id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRunning, timeLeft]);
 
     const advanceSession = (completed) => {
+        // Sadece süre doğal olarak bittiğinde çal (Skip'te değil) - hem
+        // odak süresi hem mola bitişinde, kullanıcı telefonu bırakıp
+        // gitmiş olabilir.
+        if (completed) {
+            finishPlayer.seekTo(0);
+            finishPlayer.play();
+        }
+
         if (sessionType === "focus") {
             if (completed) {
                 const todayKey = toDateKey(new Date());

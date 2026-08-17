@@ -28,6 +28,12 @@ const SORTS = [
     { key: "priority", label: "Sort: Priority" },
 ];
 
+function formatDate(isoString) {
+    if (!isoString) return "";
+    const d = new Date(isoString);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 function HomeScreen() {
     const { colors } = useTheme();
     const styles = useMemo(() => createStyles(colors), [colors]);
@@ -171,9 +177,12 @@ function HomeScreen() {
                     )}
                 </Pressable>
 
-                <Text style={[styles.taskText, item.completed && styles.taskTextDone]}>
-                    {item.text}
-                </Text>
+                <View style={styles.taskMain}>
+                    <Text style={[styles.taskText, item.completed && styles.taskTextDone]}>
+                        {item.text}
+                    </Text>
+                    <Text style={styles.taskDate}>{formatDate(item.createdAt)}</Text>
+                </View>
 
                 <View style={[styles.priorityDot, { backgroundColor: priorityColors[item.priority] }]} />
 
@@ -492,10 +501,17 @@ function createStyles(colors) {
             backgroundColor: colors.accent,
             borderColor: colors.accent,
         },
-        taskText: {
+        taskMain: {
             flex: 1,
+        },
+        taskText: {
             fontSize: 15,
             color: colors.text,
+        },
+        taskDate: {
+            fontSize: 11,
+            color: colors.textMuted,
+            marginTop: 2,
         },
         taskTextDone: {
             textDecorationLine: "line-through",
