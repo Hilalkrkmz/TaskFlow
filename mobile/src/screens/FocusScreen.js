@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Svg, { Circle } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAudioPlayer } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import apiClient from "../api/client";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -55,8 +55,13 @@ function FocusScreen() {
     const [pickingTask, setPickingTask] = useState(false);
     const [pomodoroLog, setPomodoroLog] = useState({});
     const firstRender = useRef(true);
-    const finishPlayer = useAudioPlayer(finishSound);
-    const tickPlayer = useAudioPlayer(tickSound);
+    // downloadFirst: ekran açılır açılmaz sesleri indirip hazırlıyor - aksi
+    // halde ilk play() çağrısı (henüz yüklenmediği için) sessiz kalabiliyor.
+    // isLoaded kontrolü de bunun garantisi - yüklenmeden play() çağırmıyoruz.
+    const finishPlayer = useAudioPlayer(finishSound, { downloadFirst: true });
+    const finishStatus = useAudioPlayerStatus(finishPlayer);
+    const tickPlayer = useAudioPlayer(tickSound, { downloadFirst: true });
+    const tickStatus = useAudioPlayerStatus(tickPlayer);
 
     useFocusEffect(
         useCallback(() => {
@@ -88,7 +93,7 @@ function FocusScreen() {
 
         // Son 3 saniye (3, 2, 1 gösterilirken) her saniye kısa bir "tık" -
         // Skip'te tetiklenmiyor çünkü bu efekt sadece isRunning ilerlerken çalışıyor.
-        if (timeLeft <= 3) {
+        if (timeLeft <= 3 && tickStatus.isLoaded) {
             tickPlayer.seekTo(0);
             tickPlayer.play();
         }
@@ -102,7 +107,7 @@ function FocusScreen() {
         // Sadece süre doğal olarak bittiğinde çal (Skip'te değil) - hem
         // odak süresi hem mola bitişinde, kullanıcı telefonu bırakıp
         // gitmiş olabilir.
-        if (completed) {
+        if (completed && finishStatus.isLoaded) {
             finishPlayer.seekTo(0);
             finishPlayer.play();
         }

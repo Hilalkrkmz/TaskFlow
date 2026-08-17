@@ -6,7 +6,7 @@ import {
     StyleSheet,
     useWindowDimensions,
 } from "react-native";
-import Svg, { Path, Defs, RadialGradient, Stop } from "react-native-svg";
+import Svg, { Path, Rect, Defs, RadialGradient, LinearGradient, Stop } from "react-native-svg";
 import { useTheme } from "../theme/ThemeContext";
 
 function useDelayedLoop(
@@ -548,7 +548,8 @@ function ForestScene() {
 // SPACE
 // ======================================================
 
-const STAR_COUNT = 35;
+const STAR_COUNT = 45;
+const BRIGHT_STAR_COUNT = 4;
 
 function Star({
     top,
@@ -557,6 +558,7 @@ function Star({
     duration,
     delay,
     bright,
+    id,
 }) {
     const progress = useDelayedLoop(
         duration,
@@ -566,15 +568,63 @@ function Star({
         }
     );
 
+    // Parlak yıldızlar tamamen kaybolmuyor - normal yıldızlarla aynı soluk
+    // seviyede (0.2) kalıp, arada yavaşça 1'e (tam parlak) çıkıp yine
+    // yavaşça iniyor (ani flaş değil, yumuşak bir "nefes alma" efekti).
     const opacity = bright
         ? progress.interpolate({
-              inputRange: [0, 0.5, 1],
-              outputRange: [0.3, 1, 0.3],
+              inputRange: [0, 0.25, 0.5, 0.75, 1],
+              outputRange: [0.2, 0.2, 1, 0.2, 0.2],
           })
         : progress.interpolate({
               inputRange: [0, 0.5, 1],
               outputRange: [0.2, 1, 0.2],
           });
+
+    if (bright) {
+        // Parlak yıldızlar: yumuşak bir radial-gradient hale (glow) +
+        // üstünde daha belirgin bir çekirdek nokta - normal yıldızlardan
+        // görsel olarak ayrışsın diye.
+        const coreSize = size * 1.8;
+        const glowSize = coreSize * 5;
+        const gradientId = `star-glow-${id}`;
+
+        return (
+            <Animated.View
+                style={{
+                    position: "absolute",
+                    top: `${top}%`,
+                    left: `${left}%`,
+                    width: glowSize,
+                    height: glowSize,
+                    marginLeft: -glowSize / 2,
+                    marginTop: -glowSize / 2,
+                    opacity,
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Svg width={glowSize} height={glowSize} style={StyleSheet.absoluteFill}>
+                    <Defs>
+                        <RadialGradient id={gradientId} cx="50%" cy="50%" r="50%">
+                            <Stop offset="0" stopColor="#ffffff" stopOpacity={0.9} />
+                            <Stop offset="0.35" stopColor="#ffffff" stopOpacity={0.35} />
+                            <Stop offset="1" stopColor="#ffffff" stopOpacity={0} />
+                        </RadialGradient>
+                    </Defs>
+                    <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${gradientId})`} />
+                </Svg>
+                <View
+                    style={{
+                        width: coreSize,
+                        height: coreSize,
+                        borderRadius: coreSize / 2,
+                        backgroundColor: "#ffffff",
+                    }}
+                />
+            </Animated.View>
+        );
+    }
 
     return (
         <Animated.View
@@ -597,6 +647,7 @@ function ShootingStar({
     left,
     duration,
     delay,
+    id,
 }) {
     const progress = useDelayedLoop(
         duration,
@@ -616,6 +667,8 @@ function ShootingStar({
         outputRange: [0, 1, 0, 0],
     });
 
+    const gradientId = `shooting-star-${id}`;
+
     return (
         <Animated.View
             style={{
@@ -623,15 +676,31 @@ function ShootingStar({
                 top: `${top}%`,
                 left: `${left}%`,
                 width: 90,
-                height: 2,
-                backgroundColor: "#ffffff",
+                height: 3,
                 opacity,
                 transform: [
                     { rotate: "25deg" },
                     { translateX },
                 ],
             }}
-        />
+        >
+            <Svg width="100%" height="100%">
+                <Defs>
+                    <LinearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+                        <Stop offset="0" stopColor="#ffffff" stopOpacity={0} />
+                        <Stop offset="1" stopColor="#ffffff" stopOpacity={1} />
+                    </LinearGradient>
+                </Defs>
+                <Rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    rx="1.5"
+                    fill={`url(#${gradientId})`}
+                />
+            </Svg>
+        </Animated.View>
     );
 }
 
@@ -656,6 +725,16 @@ const SHOOTING_STARS = [
     },
 ];
 
+// 4 sabit köşe/bölge - her birine bir parlak yıldız düşsün diye ekran 2x2
+// bölünüyor, her bölgenin ortasına yakın (kenarlara değmeyecek şekilde)
+// rastgele bir nokta seçiliyor. Böylece 4 parlak yıldız hep birbirinden uzak.
+const BRIGHT_STAR_QUADRANTS = [
+    { top: 0, left: 0 },
+    { top: 0, left: 50 },
+    { top: 50, left: 0 },
+    { top: 50, left: 50 },
+];
+
 function SpaceScene() {
     const stars = useMemo(
         () =>
@@ -665,12 +744,25 @@ function SpaceScene() {
                 id: i,
                 top: Math.random() * 100,
                 left: Math.random() * 100,
-                size: 1 + Math.random() * 2,
+                size: 1.8 + Math.random() * 2.6,
                 duration:
                     2 + Math.random() * 3,
                 delay: Math.random() * 5,
-                bright:
-                    Math.random() < 0.15,
+                bright: false,
+            })),
+        []
+    );
+
+    const brightStars = useMemo(
+        () =>
+            BRIGHT_STAR_QUADRANTS.slice(0, BRIGHT_STAR_COUNT).map((q, i) => ({
+                id: `bright-${i}`,
+                top: q.top + 15 + Math.random() * 20,
+                left: q.left + 15 + Math.random() * 20,
+                size: 1.5 + Math.random() * 1,
+                duration: 7 + Math.random() * 5,
+                delay: Math.random() * 6,
+                bright: true,
             })),
         []
     );
@@ -687,10 +779,18 @@ function SpaceScene() {
                 />
             ))}
 
+            {brightStars.map((s) => (
+                <Star
+                    key={s.id}
+                    {...s}
+                />
+            ))}
+
             {SHOOTING_STARS.map(
                 (s, i) => (
                     <ShootingStar
                         key={i}
+                        id={i}
                         {...s}
                     />
                 )
