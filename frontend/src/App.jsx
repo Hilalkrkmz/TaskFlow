@@ -18,6 +18,7 @@ import Profile from "./components/Profile";
 import VerifyEmail from "./components/VerifyEmail";
 import ForgotPassword from "./components/ForgotPassword";
 import axiosInstance from "./api/axiosInstance";
+import { getErrorMessage } from "./api/errorMessage";
 
 const priorityWeight={high:3, medium: 2, low:1};
 
@@ -60,7 +61,7 @@ const addTask = async (text, priority) => {
         const response = await axiosInstance.post("/tasks", { text, priority });
         setTasks([...tasks, response.data]);
     } catch (err) {
-        console.error("Görev eklenemedi:", err);
+        alert(getErrorMessage(err, "Couldn't add task. Something went wrong."));
     }
 };
 
@@ -74,7 +75,7 @@ const toggleTask = async (id) => {
         });
         setTasks(tasks.map(t => (t.id === id ? response.data : t)));
     } catch (err) {
-        console.error("Görev güncellenemedi:", err);
+        alert(getErrorMessage(err, "Couldn't update task. Something went wrong."));
     }
 };
 
@@ -83,7 +84,7 @@ const updateTask = async (id, newText) => {
         const response = await axiosInstance.patch(`/tasks/${id}`, { text: newText });
         setTasks(tasks.map(t => (t.id === id ? response.data : t)));
     } catch (err) {
-        console.error("Görev güncellenemedi:", err);
+        alert(getErrorMessage(err, "Couldn't update task. Something went wrong."));
     }
 };
 
@@ -92,7 +93,37 @@ const deleteTask = async (id) => {
         await axiosInstance.delete(`/tasks/${id}`);
         setTasks(tasks.filter(t => t.id !== id));
     } catch (err) {
-        console.error("Görev silinemedi:", err);
+        alert(getErrorMessage(err, "Couldn't delete task. Something went wrong."));
+    }
+};
+
+// Not: Notes.jsx eskiden bu işlemleri hiç backend'e göndermiyordu (sadece
+// yerel state'i değiştiriyordu, yenilemede kaybolurdu) - task fonksiyonlarıyla
+// aynı desende gerçek backend çağrılarına bağlandı.
+const addNote = async (text) => {
+    try {
+        const response = await axiosInstance.post("/notes", { text });
+        setNotes([response.data, ...notes]);
+    } catch (err) {
+        alert(getErrorMessage(err, "Couldn't add note. Something went wrong."));
+    }
+};
+
+const updateNote = async (id, newText) => {
+    try {
+        const response = await axiosInstance.patch(`/notes/${id}`, { text: newText });
+        setNotes(notes.map(n => (n.id === id ? response.data : n)));
+    } catch (err) {
+        alert(getErrorMessage(err, "Couldn't update note. Something went wrong."));
+    }
+};
+
+const deleteNote = async (id) => {
+    try {
+        await axiosInstance.delete(`/notes/${id}`);
+        setNotes(notes.filter(n => n.id !== id));
+    } catch (err) {
+        alert(getErrorMessage(err, "Couldn't delete note. Something went wrong."));
     }
 };
 
@@ -280,7 +311,9 @@ return (
   )}
 
     {view === "calendar" && <Calendar tasks={tasks} />}
-    {view === "notes" && <Notes notes={notes} setNotes={setNotes} />}
+    {view === "notes" && (
+      <Notes notes={notes} onAddNote={addNote} onUpdateNote={updateNote} onDeleteNote={deleteNote} />
+    )}
      <div style={{ display: view === "focus" ? "block" : "none" }}>
       <Focus tasks={tasks} />
     </div>

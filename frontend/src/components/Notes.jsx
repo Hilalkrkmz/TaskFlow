@@ -6,26 +6,19 @@ function formatDate(isoString) {
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function Notes({ notes, setNotes }) {
+function Notes({ notes, onAddNote, onUpdateNote, onDeleteNote }) {
     const [text, setText] = useState("");
     const [editingId, setEditingId] = useState(null);
     const [editText, setEditText] = useState("");
 
     const addNote = () => {
         if (!text.trim()) return;
-
-        const newNote = {
-            id: Date.now(),
-            text: text,
-            createdAt: new Date().toISOString()
-        };
-
-        setNotes([newNote, ...notes]);
+        onAddNote(text);
         setText("");
     };
 
     const deleteNote = (id) => {
-        setNotes(notes.filter(note => note.id !== id));
+        onDeleteNote(id);
     };
 
     const startEditing = (note) => {
@@ -40,12 +33,7 @@ function Notes({ notes, setNotes }) {
 
     const saveEdit = (id) => {
         if (!editText.trim()) return;
-
-        setNotes(
-            notes.map(note =>
-                note.id === id ? { ...note, text: editText } : note
-            )
-        );
+        onUpdateNote(id, editText);
         setEditingId(null);
         setEditText("");
     };
