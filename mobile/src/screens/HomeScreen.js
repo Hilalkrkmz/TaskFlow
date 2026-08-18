@@ -7,11 +7,13 @@ import {
     FlatList,
     StyleSheet,
     ActivityIndicator,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import { useTheme } from "../theme/ThemeContext";
 
 const PRIORITIES = ["high", "medium", "low"];
@@ -81,7 +83,7 @@ function HomeScreen() {
             setText("");
             setPriority("medium");
         } catch (err) {
-            console.error("Görev eklenemedi:", err);
+            Alert.alert("Couldn't add task", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 
@@ -92,7 +94,7 @@ function HomeScreen() {
             });
             setTasks((prev) => prev.map((t) => (t.id === task.id ? response.data : t)));
         } catch (err) {
-            console.error("Görev güncellenemedi:", err);
+            Alert.alert("Couldn't update task", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 
@@ -101,7 +103,7 @@ function HomeScreen() {
             await apiClient.delete(`/tasks/${id}`);
             setTasks((prev) => prev.filter((t) => t.id !== id));
         } catch (err) {
-            console.error("Görev silinemedi:", err);
+            Alert.alert("Couldn't delete task", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 
@@ -124,7 +126,7 @@ function HomeScreen() {
             setEditingId(null);
             setEditText("");
         } catch (err) {
-            console.error("Görev güncellenemedi:", err);
+            Alert.alert("Couldn't update task", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 

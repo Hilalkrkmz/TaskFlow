@@ -21,7 +21,7 @@ const tickSound = require("../../assets/tick.wav");
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const DURATIONS = {
-    focus: 1 * 60,
+    focus: 25 * 60,
     short: 5 * 60,
     long: 15 * 60,
 };

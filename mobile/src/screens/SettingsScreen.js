@@ -7,6 +7,7 @@ import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import * as DocumentPicker from "expo-document-picker";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import { useTheme } from "../theme/ThemeContext";
 
 // Web'deki Settings.jsx'te Export/Import tarayıcının dosya indirme/okuma
@@ -38,7 +39,7 @@ function SettingsScreen() {
             await Promise.all(tasks.map((t) => apiClient.delete(`/tasks/${t.id}`)));
             setTasks([]);
         } catch (err) {
-            console.error("Görevler silinemedi:", err);
+            Alert.alert("Couldn't clear tasks", getErrorMessage(err, "Something went wrong. Please try again."));
         } finally {
             setClearing(false);
             setConfirming(false);
@@ -57,7 +58,6 @@ function SettingsScreen() {
                 Alert.alert("Exported", `Saved to ${fileUri}`);
             }
         } catch (err) {
-            console.error("Dışa aktarılamadı:", err);
             Alert.alert("Export failed", "Something went wrong while exporting tasks.");
         } finally {
             setExporting(false);
@@ -85,8 +85,10 @@ function SettingsScreen() {
             );
             fetchTasks();
         } catch (err) {
-            console.error("İçe aktarılamadı:", err);
-            Alert.alert("Import failed", "Couldn't read the file, please check the JSON format.");
+            Alert.alert(
+                "Import failed",
+                getErrorMessage(err, "Couldn't read the file, please check the JSON format.")
+            );
         } finally {
             setImporting(false);
         }

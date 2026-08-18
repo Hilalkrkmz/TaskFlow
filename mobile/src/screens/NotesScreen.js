@@ -7,10 +7,12 @@ import {
     FlatList,
     StyleSheet,
     ActivityIndicator,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import { useTheme } from "../theme/ThemeContext";
 
 function formatDate(isoString) {
@@ -51,7 +53,7 @@ function NotesScreen() {
             setNotes((prev) => [response.data, ...prev]);
             setText("");
         } catch (err) {
-            console.error("Not eklenemedi:", err);
+            Alert.alert("Couldn't add note", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 
@@ -60,7 +62,7 @@ function NotesScreen() {
             await apiClient.delete(`/notes/${id}`);
             setNotes((prev) => prev.filter((n) => n.id !== id));
         } catch (err) {
-            console.error("Not silinemedi:", err);
+            Alert.alert("Couldn't delete note", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 
@@ -83,7 +85,7 @@ function NotesScreen() {
             setEditingId(null);
             setEditText("");
         } catch (err) {
-            console.error("Not güncellenemedi:", err);
+            Alert.alert("Couldn't update note", getErrorMessage(err, "Something went wrong. Please try again."));
         }
     };
 
