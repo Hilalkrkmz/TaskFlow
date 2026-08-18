@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import AuthBackground from "../components/AuthBackground";
 
 // 3 adım:
@@ -37,7 +38,7 @@ function ForgotPasswordScreen({ navigation }) {
             setInfo(response.data.message);
             setStep(2);
         } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong.");
+            setError(getErrorMessage(err, "Something went wrong."));
         } finally {
             setLoading(false);
         }
@@ -52,7 +53,7 @@ function ForgotPasswordScreen({ navigation }) {
             await apiClient.post("/auth/verify-reset-code", { email, code });
             setStep(3);
         } catch (err) {
-            setError(err.response?.data?.error || "Invalid or expired code.");
+            setError(getErrorMessage(err, "Invalid or expired code."));
         } finally {
             setLoading(false);
         }
@@ -75,7 +76,7 @@ function ForgotPasswordScreen({ navigation }) {
                 navigation.navigate("Login");
             }, 1500);
         } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong.");
+            setError(getErrorMessage(err, "Something went wrong."));
         } finally {
             setLoading(false);
         }

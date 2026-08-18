@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import { setToken } from "../auth/tokenStorage";
 import AuthBackground from "../components/AuthBackground";
 
@@ -32,7 +33,7 @@ function VerifyEmailScreen({ route, onVerifySuccess, navigation }) {
             await setToken(token);
             onVerifySuccess({ fullName, email: userEmail, theme });
         } catch (err) {
-            setError(err.response?.data?.error || "Verification failed.");
+            setError(getErrorMessage(err, "Verification failed."));
         } finally {
             setLoading(false);
         }
@@ -47,7 +48,7 @@ function VerifyEmailScreen({ route, onVerifySuccess, navigation }) {
             const response = await apiClient.post("/auth/resend-verification", { email });
             setInfo(response.data.message);
         } catch (err) {
-            setError(err.response?.data?.error || "Could not resend code.");
+            setError(getErrorMessage(err, "Could not resend code."));
         } finally {
             setResending(false);
         }

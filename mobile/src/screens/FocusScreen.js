@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, Pressable, ScrollView, StyleSheet, Animated, Easing } from "react-native";
+import { View, Text, Pressable, ScrollView, StyleSheet, Animated, Easing, AppState } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +8,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import apiClient from "../api/client";
 import { useTheme } from "../theme/ThemeContext";
+import {
+    configureFocusNotifications,
+    requestNotificationPermission,
+    scheduleSessionEndNotification,
+    cancelScheduledNotification,
+} from "../utils/focusNotifications";
 
 const finishSound = require("../../assets/success.wav");
 const tickSound = require("../../assets/tick.wav");
@@ -15,7 +21,7 @@ const tickSound = require("../../assets/tick.wav");
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const DURATIONS = {
-    focus: 25 * 60,
+    focus: 1 * 60,
     short: 5 * 60,
     long: 15 * 60,
 };
@@ -62,6 +68,15 @@ function FocusScreen() {
     const finishStatus = useAudioPlayerStatus(finishPlayer);
     const tickPlayer = useAudioPlayer(tickSound, { downloadFirst: true });
     const tickStatus = useAudioPlayerStatus(tickPlayer);
+    // Ref kullanıyoruz çünkü bunlar ekrana çizilen bir şeyi değiştirmiyor,
+    // sadece "arka planda gerçek zamanı takip etmek" ve "planlı bildirimin
+    // id'sini hatırlamak" için - state olsalar gereksiz re-render'a yol açardı.
+    const sessionEndAtRef = useRef(null);
+    const notificationIdRef = useRef(null);
+
+    useEffect(() => {
+        configureFocusNotifications();
+    }, []);
 
     useFocusEffect(
         useCallback(() => {
@@ -103,7 +118,49 @@ function FocusScreen() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isRunning, timeLeft]);
 
-    const advanceSession = (completed) => {
+    // Uygulama arka plandan öne dönünce (telefon kilidi açıldı, başka
+    // uygulamadan geri gelindi vb.) JS timer'ların arka planda durmuş/
+    // yavaşlamış olabileceğini varsayıp gerçek zamandan (sessionEndAtRef)
+    // kalan süreyi yeniden hesaplıyoruz - ekrandaki sayaç asla yalan söylemesin.
+    useEffect(() => {
+        const subscription = AppState.addEventListener("change", (nextAppState) => {
+            if (nextAppState !== "active") return;
+            if (!isRunning || !sessionEndAtRef.current) return;
+
+            const remaining = Math.max(
+                0,
+                Math.round((sessionEndAtRef.current - Date.now()) / 1000)
+            );
+            setTimeLeft(remaining);
+
+            if (remaining === 0) {
+                advanceSession(true);
+            }
+        });
+
+        return () => subscription.remove();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isRunning]);
+
+    // Play'e her basıldığında (ya da otomatik zincirlenen bir sonraki
+    // oturumda) çağrılıyor - kalan süreye göre bildirimi (yeniden) planlıyor
+    // ve gerçek bitiş zamanını (epoch ms) sessionEndAtRef'e yazıyor.
+    const startNotificationFor = async (type, seconds) => {
+        sessionEndAtRef.current = Date.now() + seconds * 1000;
+        const granted = await requestNotificationPermission();
+        if (!granted) return;
+        notificationIdRef.current = await scheduleSessionEndNotification(type, seconds);
+    };
+
+    // Pause/Reset/Skip/tab değişimi gibi "artık bu bildirime gerek yok"
+    // durumlarında çağrılıyor.
+    const stopNotification = async () => {
+        await cancelScheduledNotification(notificationIdRef.current);
+        notificationIdRef.current = null;
+        sessionEndAtRef.current = null;
+    };
+
+    const advanceSession = async (completed) => {
         // Sadece süre doğal olarak bittiğinde çal (Skip'te değil) - hem
         // odak süresi hem mola bitişinde, kullanıcı telefonu bırakıp
         // gitmiş olabilir.
@@ -112,6 +169,7 @@ function FocusScreen() {
             finishPlayer.play();
         }
 
+        let nextType;
         if (sessionType === "focus") {
             if (completed) {
                 const todayKey = toDateKey(new Date());
@@ -119,23 +177,40 @@ function FocusScreen() {
             }
             const nextCount = focusCount + 1;
             setFocusCount(nextCount);
-            if (nextCount % SESSIONS_BEFORE_LONG_BREAK === 0) {
-                setSessionType("long");
-                setTimeLeft(DURATIONS.long);
-            } else {
-                setSessionType("short");
-                setTimeLeft(DURATIONS.short);
-            }
+            nextType = nextCount % SESSIONS_BEFORE_LONG_BREAK === 0 ? "long" : "short";
         } else {
-            setSessionType("focus");
-            setTimeLeft(DURATIONS.focus);
+            nextType = "focus";
+        }
+
+        const nextTime = DURATIONS[nextType];
+        setSessionType(nextType);
+        setTimeLeft(nextTime);
+
+        if (completed && isRunning) {
+            // Kullanıcı Play'e tekrar basmadan oturumlar zincirleniyor
+            // (Focus bitti, mola otomatik başladı gibi) - arka planda kalan
+            // kullanıcı için yeni oturuma göre bildirimi de yenilememiz lazım,
+            // yoksa sadece ilk oturumda bildirim çalışırdı.
+            await startNotificationFor(nextType, nextTime);
+        } else {
+            await stopNotification();
         }
     };
 
-    const toggleRunning = () => setIsRunning((prev) => !prev);
+    const toggleRunning = async () => {
+        if (isRunning) {
+            setIsRunning(false);
+            await stopNotification();
+            return;
+        }
 
-    const resetSession = () => {
+        setIsRunning(true);
+        await startNotificationFor(sessionType, timeLeft);
+    };
+
+    const resetSession = async () => {
         setIsRunning(false);
+        await stopNotification();
         setTimeLeft(DURATIONS[sessionType]);
     };
 
@@ -144,9 +219,10 @@ function FocusScreen() {
         advanceSession(false);
     };
 
-    const selectSessionType = (type) => {
+    const selectSessionType = async (type) => {
         if (type === sessionType) return;
         setIsRunning(false);
+        await stopNotification();
         setSessionType(type);
         setTimeLeft(DURATIONS[type]);
     };

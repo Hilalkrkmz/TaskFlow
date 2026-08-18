@@ -9,6 +9,7 @@ import {
     ScrollView,
 } from "react-native";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import AuthBackground from "../components/AuthBackground";
 
 function RegisterScreen({ navigation }) {
@@ -35,7 +36,7 @@ function RegisterScreen({ navigation }) {
 
             navigation.navigate("VerifyEmail", { email });
         } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong. Please try again.");
+            setError(getErrorMessage(err, "Something went wrong. Please try again."));
         } finally {
             setLoading(false);
         }

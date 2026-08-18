@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, ScrollView, StyleSheet, ActivityIndic
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import { useTheme } from "../theme/ThemeContext";
 
 function ProfileScreen({ currentUser, onLogout }) {
@@ -35,7 +36,7 @@ function ProfileScreen({ currentUser, onLogout }) {
             setConfirmNewPassword("");
             setTimeout(() => setShowChangePassword(false), 1500);
         } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong. Please try again.");
+            setError(getErrorMessage(err, "Something went wrong. Please try again."));
         } finally {
             setLoading(false);
         }

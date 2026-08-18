@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import apiClient from "../api/client";
+import { getErrorMessage } from "../api/errorMessage";
 import { setToken } from "../auth/tokenStorage";
 import AuthBackground from "../components/AuthBackground";
 
@@ -35,7 +36,7 @@ function LoginScreen({ onLoginSuccess, navigation }) {
             await setToken(token);
             onLoginSuccess({ fullName, email: userEmail, theme });
         } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong. Please try again.");
+            setError(getErrorMessage(err, "Something went wrong. Please try again."));
         } finally {
             setLoading(false);
         }

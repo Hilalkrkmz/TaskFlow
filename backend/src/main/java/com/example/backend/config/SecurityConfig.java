@@ -33,8 +33,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // React dev sunucusunun adresi. Buradan gelen isteklere izin veriyoruz.
-        config.setAllowedOrigins(List.of("http://localhost:5173","null"));
+        // React dev sunucusunun adresi + Expo web önizlemesinin kullandığı portlar
+        // (8081: Metro/Expo varsayılanı, 19006: eski Expo web varsayılanı).
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:8081",
+                "http://localhost:19006",
+                "null"
+        ));
 
         // Hangi HTTP metotlarına izin var (GET, POST, PATCH, DELETE hepsini kullanıyoruz).
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
