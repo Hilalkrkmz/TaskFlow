@@ -1,15 +1,21 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { THEMES, DEFAULT_THEME } from "./themes";
 
 const ThemeContext = createContext(null);
 
-// initialTheme: RootNavigator, currentUser?.theme ?? "white" geçiriyor.
-// Kullanıcı login/logout yaptığında currentUser değişip bu prop yeniden
-// mount tetiklemez (Provider zaten NavigationContainer'ı sarıyor) - bu yüzden
-// ThemesScreen, seçim yapıldığında context'teki setThemeKey'i çağırıyor,
-// RootNavigator'daki currentUser.theme güncellemesine bağlı kalmıyor.
+// initialTheme: RootNavigator, currentUser?.theme geçiriyor. Provider,
+// auth ekranları görünürken (currentUser henüz null) zaten mount olmuş
+// oluyor - bu yüzden sadece ilk mount'taki initialTheme'i almak yetmiyor,
+// login/auto-login tamamlanıp gerçek theme değeri geldiğinde de senkron
+// olması için initialTheme değiştikçe themeKey'i güncelliyoruz.
 export function ThemeProvider({ initialTheme, children }) {
     const [themeKey, setThemeKey] = useState(initialTheme || DEFAULT_THEME);
+
+    useEffect(() => {
+        if (initialTheme) {
+            setThemeKey(initialTheme);
+        }
+    }, [initialTheme]);
 
     const value = useMemo(
         () => ({
