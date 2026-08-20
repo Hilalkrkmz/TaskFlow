@@ -193,6 +193,9 @@ function createStyles(colors) {
         listContent: {
             paddingHorizontal: 20,
             paddingBottom: 24,
+            width: "100%",
+            maxWidth: 480,
+            alignSelf: "center",
         },
         header: {
             paddingTop: 12,

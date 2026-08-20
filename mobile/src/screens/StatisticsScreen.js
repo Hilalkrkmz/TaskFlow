@@ -196,6 +196,9 @@ function createStyles(colors) {
         },
         content: {
             padding: 20,
+            width: "100%",
+            maxWidth: 480,
+            alignSelf: "center",
         },
         title: {
             fontSize: 24,

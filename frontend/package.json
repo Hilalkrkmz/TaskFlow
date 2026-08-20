@@ -36,6 +36,8 @@
   },
   "build": {
     "appId": "com.hilal.taskflow",
+    "productName": "TaskFlow",
+    "icon": "build/icon.png",
     "files": [
       "dist/**/*",
       "electron/**/*"

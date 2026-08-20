@@ -19,14 +19,19 @@ const THEME_NAMES = {
 
 const GRID_GAP = 12;
 const CONTENT_PADDING = 20;
+const CONTENT_MAX_WIDTH = 480;
 const COLUMNS = 2;
 
 function ThemesScreen({ onThemeChange }) {
     const { themeKey, setThemeKey, colors } = useTheme();
     const styles = useMemo(() => createStyles(colors), [colors]);
-    const { width: screenWidth } = useWindowDimensions();
+    const { width: rawScreenWidth } = useWindowDimensions();
     // % + gap kombinasyonu dar ekranlarda tutarsız sarılıyordu (bazen 2,
     // bazen 3 sütun) - genişliği doğrudan hesaplayıp sabit 2 sütun garantiliyoruz.
+    // content'in kendisi tablette CONTENT_MAX_WIDTH'e sabitlendiği için
+    // (aşağıdaki styles.content'e bak) burada da aynı sınırı kullanmalıyız,
+    // yoksa kartlar gerçek konteynerden daha büyük hesaplanır.
+    const screenWidth = Math.min(rawScreenWidth, CONTENT_MAX_WIDTH);
     const cardWidth =
         (screenWidth - CONTENT_PADDING * 2 - GRID_GAP * (COLUMNS - 1)) / COLUMNS;
 
@@ -80,6 +85,9 @@ function createStyles(colors) {
         },
         content: {
             padding: CONTENT_PADDING,
+            width: "100%",
+            maxWidth: CONTENT_MAX_WIDTH,
+            alignSelf: "center",
         },
         title: {
             fontSize: 24,

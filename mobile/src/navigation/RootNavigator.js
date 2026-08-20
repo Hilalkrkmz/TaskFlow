@@ -7,7 +7,7 @@ import ScrollableTabBar from "./ScrollableTabBar";
 import HomeScreen from "../screens/HomeScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import NotesScreen from "../screens/NotesScreen";
-import FocusScreen from "../screens/FocusScreen";
+import FocusStackNavigator from "./FocusStackNavigator";
 import StatisticsScreen from "../screens/StatisticsScreen";
 import ThemesScreen from "../screens/ThemesScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -52,7 +52,7 @@ function AppStack({ currentUser, onLogout, onThemeChange }) {
             <Tab.Screen name="Home" component={HomeScreen} options={{ title: "TaskFlow" }} />
             <Tab.Screen name="Calendar" component={CalendarScreen} />
             <Tab.Screen name="Notes" component={NotesScreen} />
-            <Tab.Screen name="Focus" component={FocusScreen} />
+            <Tab.Screen name="Focus" component={FocusStackNavigator} />
             <Tab.Screen name="Statistics" component={StatisticsScreen} />
             <Tab.Screen name="Themes">
                 {(props) => <ThemesScreen {...props} onThemeChange={onThemeChange} />}
