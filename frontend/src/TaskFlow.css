@@ -1544,6 +1544,7 @@
 
 .focus-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 24px;
 }
@@ -1647,6 +1648,15 @@
   opacity: 0.9;
 }
 
+.focus-control-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.focus-control-btn:disabled:hover {
+  background: var(--surface);
+}
+
 .focus-task-link {
   width: 100%;
   border: 1px solid var(--border);
@@ -1715,6 +1725,133 @@
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 6px;
+}
+
+.focus-summary-block {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.focus-summary-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.focus-summary-empty {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.focus-summary-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.focus-summary-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.focus-history-header {
+  width: 100%;
+}
+
+.focus-history-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.focus-history-back:hover {
+  color: var(--text);
+}
+
+.focus-history-section {
+  width: 100%;
+}
+
+.focus-history-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 16px 0 6px;
+}
+
+.focus-history-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.focus-history-row-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.focus-history-row-type {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.focus-history-row-task {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.focus-history-row-time {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.focus-history-row-duration {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.focus-history-delete {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.focus-history-delete:hover {
+  color: var(--text);
 }
 
 .profile-page {
