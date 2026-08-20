@@ -47,6 +47,13 @@ public class FocusSessionService {
         return toResponse(session);
     }
 
+    public void deleteSession(User user, Long id) {
+        FocusSession session = focusSessionRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResourceNotFoundException("Session not found"));
+
+        focusSessionRepository.delete(session);
+    }
+
     private FocusSessionResponse toResponse(FocusSession session) {
         return FocusSessionResponse.builder()
                 .id(session.getId())

@@ -35,4 +35,13 @@ public class FocusSessionController {
         FocusSessionResponse response = focusSessionService.createSession(principal.getUser(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSession(
+            @AuthenticationPrincipal UserDetailsImpl principal,
+            @PathVariable Long id
+    ) {
+        focusSessionService.deleteSession(principal.getUser(), id);
+        return ResponseEntity.noContent().build();
+    }
 }
