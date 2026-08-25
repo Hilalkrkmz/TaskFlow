@@ -9,7 +9,7 @@ import { Platform } from "react-native";
 //   Telefon ve bilgisayar aynı Wi-Fi'de olmalı, backend'e bilgisayarının GERÇEK LAN IP'siyle
 //   ulaşman lazım (örn. 192.168.1.23). "ipconfig" (Windows) ile "IPv4 Address" satırına bak.
 
-const LAN_IP = "192.168.1.106"; // <-- kendi bilgisayarının LAN IP'siyle değiştir
+const LAN_IP = "192.168.43.185"; // <-- kendi bilgisayarının LAN IP'siyle değiştir
 
 const getBaseUrl = () => {
     if (Platform.OS === "android") {
