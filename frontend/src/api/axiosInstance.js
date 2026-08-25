@@ -1,7 +1,9 @@
 import axios from "axios";
 
+// Backend artık Railway'de (cloud) çalışıyor - localhost'a değil oraya bağlanıyoruz,
+// böylece hem Electron hem web hangi bilgisayarda çalışırsa çalışsın erişebiliyor.
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api",
+    baseURL: "https://taskflow-production-3c7d.up.railway.app/api",
     timeout: 15000,
 });
 
