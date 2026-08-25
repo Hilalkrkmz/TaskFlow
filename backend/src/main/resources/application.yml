@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/taskflow
-    username: taskflow_user
-    password: taskflow_pass
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/taskflow}
+    username: ${DB_USERNAME:taskflow_user}
+    password: ${DB_PASSWORD:taskflow_pass}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -27,10 +27,10 @@ spring:
               enable: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 jwt:
-  secret: this-is-a-very-long-development-only-secret-key-change-in-production-123456
+  secret: ${JWT_SECRET:this-is-a-very-long-development-only-secret-key-change-in-production-123456}
   expiration-ms: 86400000
 
 app:
