@@ -16,7 +16,7 @@ spring:
 
   mail:
       host: smtp.gmail.com
-      port: 587
+      port: ${MAIL_PORT:587}
       username: taskflow.app.team@gmail.com
       password: ${MAIL_PASSWORD}
       properties:
@@ -24,7 +24,9 @@ spring:
           smtp:
             auth: true
             starttls:
-              enable: true
+              enable: ${MAIL_STARTTLS:true}
+            ssl:
+              enable: ${MAIL_SSL:false}
 
 server:
   port: ${PORT:8080}
