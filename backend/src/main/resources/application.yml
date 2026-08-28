@@ -14,20 +14,6 @@ spring:
         format_sql: true
     open-in-view: false
 
-  mail:
-      host: smtp.gmail.com
-      port: ${MAIL_PORT:587}
-      username: taskflow.app.team@gmail.com
-      password: ${MAIL_PASSWORD}
-      properties:
-        mail:
-          smtp:
-            auth: true
-            starttls:
-              enable: ${MAIL_STARTTLS:true}
-            ssl:
-              enable: ${MAIL_SSL:false}
-
 server:
   port: ${PORT:8080}
 
@@ -37,6 +23,9 @@ jwt:
 
 app:
   mail:
-    from: taskflow.app.team@gmail.com
+    # Resend'in ucretsiz/domain dogrulanmamis hesabinda gonderici adresi bu
+    # sabit test adresi olmak zorunda - kendi domainini dogrularsan degistirilebilir.
+    from: ${MAIL_FROM:onboarding@resend.dev}
+    resend-api-key: ${RESEND_API_KEY:}
   verification:
     code-expiry-minutes: 10

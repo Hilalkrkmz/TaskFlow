@@ -1,36 +1,65 @@
 package com.example.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.Map;
+
+// Railway (ve cogu bulut saglayici) giden SMTP baglantilarini (port 587/465)
+// spam onlemi olarak engelliyor - bu yuzden Gmail'e dogrudan SMTP ile
+// baglanmak yerine, Resend'in normal HTTPS API'sine (port 443, hicbir yerde
+// engellenmiyor) istek atiyoruz. Gercek gonderimi Resend hallediyor.
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private static final String RESEND_API_URL = "https://api.resend.com/emails";
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${app.mail.from}")
     private String fromAddress;
 
+    @Value("${app.mail.resend-api-key}")
+    private String resendApiKey;
+
     public void sendVerificationCode(String toEmail, String code) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(toEmail);
-        message.setSubject("Verify your TaskFlow account");
-        message.setText("Your verification code is: " + code + "\n\nThis code expires in 10 minutes.");
-        mailSender.send(message);
+        send(toEmail, "Verify your TaskFlow account",
+                "Your verification code is: " + code + "\n\nThis code expires in 10 minutes.");
     }
 
     public void sendPasswordResetCode(String toEmail, String code) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(toEmail);
-        message.setSubject("Reset your TaskFlow password");
-        message.setText("Your password reset code is: " + code + "\n\nThis code expires in 10 minutes.");
-        mailSender.send(message);
+        send(toEmail, "Reset your TaskFlow password",
+                "Your password reset code is: " + code + "\n\nThis code expires in 10 minutes.");
+    }
+
+    private void send(String toEmail, String subject, String text) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(resendApiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = Map.of(
+                "from", fromAddress,
+                "to", List.of(toEmail),
+                "subject", subject,
+                "text", text
+        );
+
+        try {
+            restTemplate.postForEntity(RESEND_API_URL, new HttpEntity<>(body, headers), String.class);
+        } catch (Exception e) {
+            // Kod zaten veritabanina kaydedildi (VerificationCodeService), mail
+            // gonderimi basarisiz olsa bile kullanici akisi tamamen kilitlenmesin -
+            // ama sorunu gorebilelim diye logluyoruz.
+            log.error("Failed to send email via Resend to {}: {}", toEmail, e.getMessage());
+        }
     }
 }
-
