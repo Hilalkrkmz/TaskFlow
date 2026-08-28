@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.hilal.taskflow",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F3ECDF"
