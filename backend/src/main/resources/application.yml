@@ -23,9 +23,9 @@ jwt:
 
 app:
   mail:
-    # Resend'in ucretsiz/domain dogrulanmamis hesabinda gonderici adresi bu
-    # sabit test adresi olmak zorunda - kendi domainini dogrularsan degistirilebilir.
-    from: ${MAIL_FROM:onboarding@resend.dev}
-    resend-api-key: ${RESEND_API_KEY:}
+    # Brevo'da dogrulanan gonderen adresi - Resend'in aksine, tek bir email'i
+    # dogrulamak yeterli, domain sahibi olmaya gerek yok.
+    from: ${MAIL_FROM:taskflow.app.team@gmail.com}
+    brevo-api-key: ${BREVO_API_KEY:}
   verification:
     code-expiry-minutes: 10

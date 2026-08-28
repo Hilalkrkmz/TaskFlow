@@ -14,22 +14,22 @@ import java.util.Map;
 
 // Railway (ve cogu bulut saglayici) giden SMTP baglantilarini (port 587/465)
 // spam onlemi olarak engelliyor - bu yuzden Gmail'e dogrudan SMTP ile
-// baglanmak yerine, Resend'in normal HTTPS API'sine (port 443, hicbir yerde
-// engellenmiyor) istek atiyoruz. Gercek gonderimi Resend hallediyor.
+// baglanmak yerine, Brevo'nun normal HTTPS API'sine (port 443, hicbir yerde
+// engellenmiyor) istek atiyoruz. Gercek gonderimi Brevo hallediyor.
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
-    private static final String RESEND_API_URL = "https://api.resend.com/emails";
+    private static final String BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${app.mail.from}")
     private String fromAddress;
 
-    @Value("${app.mail.resend-api-key}")
-    private String resendApiKey;
+    @Value("${app.mail.brevo-api-key}")
+    private String brevoApiKey;
 
     public void sendVerificationCode(String toEmail, String code) {
         send(toEmail, "Verify your TaskFlow account",
@@ -43,23 +43,24 @@ public class EmailService {
 
     private void send(String toEmail, String subject, String text) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(resendApiKey);
+        headers.set("api-key", brevoApiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> body = Map.of(
-                "from", fromAddress,
-                "to", List.of(toEmail),
+                "sender", Map.of("email", fromAddress, "name", "TaskFlow"),
+                "to", List.of(Map.of("email", toEmail)),
                 "subject", subject,
-                "text", text
+                "textContent", text,
+                "htmlContent", "<p>" + text.replace("\n", "<br>") + "</p>"
         );
 
         try {
-            restTemplate.postForEntity(RESEND_API_URL, new HttpEntity<>(body, headers), String.class);
+            restTemplate.postForEntity(BREVO_API_URL, new HttpEntity<>(body, headers), String.class);
         } catch (Exception e) {
             // Kod zaten veritabanina kaydedildi (VerificationCodeService), mail
             // gonderimi basarisiz olsa bile kullanici akisi tamamen kilitlenmesin -
             // ama sorunu gorebilelim diye logluyoruz.
-            log.error("Failed to send email via Resend to {}: {}", toEmail, e.getMessage());
+            log.error("Failed to send email via Brevo to {}: {}", toEmail, e.getMessage());
         }
     }
 }
