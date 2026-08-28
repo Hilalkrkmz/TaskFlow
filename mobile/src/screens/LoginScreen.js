@@ -36,6 +36,18 @@ function LoginScreen({ onLoginSuccess, navigation }) {
             await setToken(token);
             onLoginSuccess({ fullName, email: userEmail, theme });
         } catch (err) {
+            // Hesap var ama email dogrulanmamis - kullaniciyi hatayla bas basa
+            // birakmak yerine yeni bir kod gonderip direkt Verify ekranina goturuyoruz.
+            if (err.response?.data?.error === "Please verify your email before logging in") {
+                try {
+                    await apiClient.post("/auth/resend-verification", { email });
+                } catch {
+                    // Sessizce gec - Verify ekranindaki "Resend code" ile tekrar denenebilir.
+                }
+                navigation.navigate("VerifyEmail", { email });
+                return;
+            }
+
             setError(getErrorMessage(err, "Something went wrong. Please try again."));
         } finally {
             setLoading(false);

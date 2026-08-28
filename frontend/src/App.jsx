@@ -213,6 +213,10 @@ if (!currentUser) {
                 onLoginSuccess={handleAuthSuccess}
                 onSwitchToRegister={() => setAuthView("register")}
                 onForgotPassword={() => setAuthView("forgot-password")}
+                onNeedsVerification={(email) => {
+                    setPendingVerificationEmail(email);
+                    setAuthView("verify-email");
+                }}
             />
         );
     }

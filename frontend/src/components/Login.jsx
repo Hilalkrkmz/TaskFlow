@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axiosInstance from "../api/axiosInstance";
 
-function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword }) {
+function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword, onNeedsVerification }) {
     
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -31,6 +31,18 @@ function Login({ onLoginSuccess, onSwitchToRegister, onForgotPassword }) {
             onLoginSuccess({ fullName, email: userEmail, theme });
 
         } catch (err) {
+            // Hesap var ama email dogrulanmamis - kullaniciyi hatayla bas basa
+            // birakmak yerine yeni bir kod gonderip direkt Verify ekranina goturuyoruz.
+            if (err.response?.data?.error === "Please verify your email before logging in") {
+                try {
+                    await axiosInstance.post("/auth/resend-verification", { email });
+                } catch {
+                    // Sessizce gec - Verify ekranindaki "Resend code" ile tekrar denenebilir.
+                }
+                onNeedsVerification(email);
+                return;
+            }
+
             if (err.response && err.response.data && err.response.data.error) {
                 setError(err.response.data.error);
             } else {
