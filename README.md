@@ -111,3 +111,7 @@ npx eas-cli build -p android --profile preview
 ## Author
 
 Built by Hilal Korkmaz.
+
+## License
+
+All rights reserved — see [LICENSE](LICENSE). This repository is public for portfolio purposes only; it is not open source.
